@@ -1,1 +1,1 @@
-# gnlist-resolver-web
+# gnlist-resolver-gui
