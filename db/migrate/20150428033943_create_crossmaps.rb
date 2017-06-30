@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Migration to create crossmaps table
-class CreateCrossmaps < ActiveRecord::Migration
+class CreateCrossmaps < ActiveRecord::Migration[4.2]
   def change
     create_table :crossmaps do |t|
       t.string :filename

@@ -5,6 +5,4 @@ require "./app.rb"
 
 set :run, false
 
-use ActiveRecord::ConnectionAdapters::ConnectionManagement
-
 run Gnc::App

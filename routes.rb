@@ -33,7 +33,7 @@ module Gnc
       logger.info params
       crossmap = Crossmap.find_by_token(params[:token])
       crossmap_params = params.select do |k, _|
-        %i(data_source_id alt_headers stop_trigger).include? k
+        %i[data_source_id alt_headers stop_trigger].include? k
       end
       crossmap.update(crossmap_params)
       crossmap.save ? "OK" : nil

@@ -29,7 +29,7 @@ module Gnc
       def csvlike?(inspect_result)
         words = inspect_result.split(/\s+/).map(&:downcase)
         inspect_result =~ /\btext\b/ &&
-          (words - %w(html xml)).size == words.size
+          (words - %w[html xml]).size == words.size
       end
 
       def csv_properties(file, enc)

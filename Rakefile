@@ -10,7 +10,7 @@ require "rubocop/rake_task"
 require "sinatra/activerecord/rake"
 require_relative "app"
 
-task default: %i(rubocop spec)
+task default: %i[rubocop spec]
 
 RSpec::Core::RakeTask.new do |t|
   t.pattern = "spec/**/*spec.rb"

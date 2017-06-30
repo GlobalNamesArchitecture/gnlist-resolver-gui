@@ -1,7 +1,7 @@
 # Global Names List Resolver User Interface
 
 A web-based GUI for [gn_list_resolver]. The [gn_list_resolver] Ruby gem allows
-comparison of one list of names to another.
+comparison of one scientfic names checklist to another.
 
 [![Continuous Integration Status][ci-svg]][ci]
 [![Code Climate][code-svg]][code]
@@ -52,18 +52,17 @@ To stop it run
 docker-compose down
 ```
 
-
-[ci-svg]: https://circleci.com/gh/GlobalNamesArchitecture/gn_crossmap_web.svg?style=shield
-[ci]: https://circleci.com/gh/GlobalNamesArchitecture/gn_crossmap_web
-[code-svg]: https://codeclimate.com/github/GlobalNamesArchitecture/gn_crossmap_web/badges/gpa.svg
-[code]: https://codeclimate.com/github/GlobalNamesArchitecture/gn_crossmap_web
-[test-svg]: https://codeclimate.com/github/GlobalNamesArchitecture/gn_crossmap_web/badges/coverage.svg
-[test]: https://codeclimate.com/github/GlobalNamesArchitecture/gn_crossmap_web
-[deps-svg]: https://gemnasium.com/GlobalNamesArchitecture/gn_crossmap_web.svg
-[deps]: https://gemnasium.com/GlobalNamesArchitecture/gn_crossmap_web
+[ci-svg]: https://circleci.com/gh/GlobalNamesArchitecture/gnlist-resolver-gui.svg?style=shield
+[ci]: https://circleci.com/gh/GlobalNamesArchitecture/gnlist-resolver-gui
+[code-svg]: https://codeclimate.com/github/GlobalNamesArchitecture/gnlist-resolver-gui/badges/gpa.svg
+[code]: https://codeclimate.com/github/GlobalNamesArchitecture/gnlist-resolver-gui
+[test-svg]: https://codeclimate.com/github/GlobalNamesArchitecture/gnlist-resolver-gui/badges/coverage.svg
+[test]: https://codeclimate.com/github/GlobalNamesArchitecture/gnlist-resolver-gui
+[deps-svg]: https://gemnasium.com/GlobalNamesArchitecture/gnlist-resolver-gui.svg
+[deps]: https://gemnasium.com/GlobalNamesArchitecture/gnlist-resolver-gui
 [Guard]: https://github.com/guard/guard
 [gn_list_resolver]: https://github.com/GlobalNamesArchitecture/gn_list_resolver
-[csv-file]: https://raw.githubusercontent.com/GlobalNamesArchitecture/gn_list_resolver/master/spec/files/wellformed-semicolon.csv
+[csv-file]: https://raw.githubusercontent.com/GlobalNamesArchitecture/gn_list_resolver/master/spec/files/all-fields-semicolon.csv
 [gitter-svg]: https://badges.gitter.im/GlobalNamesArchitecture/gnlist-resolver-gui.svg
 [gitter]: https://gitter.im/GlobalNamesArchitecture/gnlist-resolver-gui?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 

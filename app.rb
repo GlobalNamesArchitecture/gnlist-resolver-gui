@@ -47,14 +47,35 @@ require_relative "helpers"
 module Gnc
   # Sinatra app namespace
   class App < Sinatra::Application
+    # Substitutes a class removed from ActifeRecord 5.x
+    # This class takes care of cleaning up ActiveRecord connections
+    class ConnectionManagement
+      def initialize(app)
+        @app = app
+      end
+
+      def call(env)
+        testing = env["rack.test"]
+
+        status, headers, body = @app.call(env)
+        proxy = ::Rack::BodyProxy.new(body) do
+          ActiveRecord::Base.clear_active_connections! unless testing
+        end
+        [status, headers, proxy]
+      rescue StandardError
+        ActiveRecord::Base.clear_active_connections! unless testing
+        raise
+      end
+    end
+
     configure do
       register Sinatra::Flash
       helpers Sinatra::RedirectWithFlash
 
       use Rack::MethodOverride
       use Rack::Session::Cookie, secret: Gnc.conf.session_secret
-
       use Rack::Timeout, service_timeout: 9_000_000
+      use ConnectionManagement
 
       Compass.add_project_configuration(File.join(File.dirname(__FILE__),
                                                   "config",

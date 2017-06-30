@@ -24,8 +24,8 @@ module Gnc
       cmap, opts = params(token)
       @output = opts[:output]
       GnCrossmap.run(opts) do |stats|
-        %i(ingestion_start resolution_start
-           resolution_stop ingestion_span resolution_span).each do |t|
+        %i[ingestion_start resolution_start
+           resolution_stop ingestion_span resolution_span].each do |t|
           stats[t] = stats[t].to_f unless stats[t].nil?
         end
         cmap.update(stats: stats)

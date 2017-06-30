@@ -1,0 +1,25 @@
+version: 2
+general:
+  branches:
+    ignore:
+      - gh-pages
+jobs:
+  build:
+    working_directory: ~/gnlist-resolver-gui
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Setup Tests
+          command: |
+              set -x
+              docker-compose build &&
+              docker-compose up -d &&
+              sleep 10 &&
+              docker-compose run app rake db:drop &&
+              docker-compose run app rake db:create &&
+              sleep 10 &&
+              docker-compose run app rake db:migrate &&
+              docker-compose run app rake db:migrate RACK_ENV=test &&
+              sleep 10 &&
+              docker-compose run app rake
