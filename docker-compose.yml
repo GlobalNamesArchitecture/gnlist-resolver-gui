@@ -1,0 +1,21 @@
+version: "2"
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "0.0.0.0:9292:9292"
+    env_file:
+      - "config/env.sh"
+    links:
+      - db
+  db:
+    image: postgres:9.6
+    ports:
+      - "0.0.0.0:15432:5432"
+    volumes:
+      - pg:/var/lib/postgres/data
+volumes:
+  pg:
+    external: false

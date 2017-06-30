@@ -1,0 +1,29 @@
+!!! 5
+%html
+  %head
+    %title
+      List Resolver
+    %link{ rel: "stylesheet", href: "/css/app.css", type: "text/css" }
+
+    %script{ src: "/js/Main.js" }
+  %body
+    .container
+      .header
+        %h1{ id: "title" }
+          %a{ href: "/" } Global Names List Resolver
+        .menu
+          %ul
+            %li
+              %a{ href: "/" } Home
+    .container
+      #content
+        = yield
+
+    .container
+      #footer{style: "padding-left: 21.5em"}
+        %a{ href: "https://github.com/GlobalNamesArchitecture/gn_crossmap_web/blob/master/LICENSE" }
+          MIT License
+        |
+        %a{ href: "https://github.com/GlobalNamesArchitecture/gn_crossmap_web/releases" }
+          Version
+          = Gnc.version

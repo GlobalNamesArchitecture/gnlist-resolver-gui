@@ -1,0 +1,30 @@
+function! Layout()
+    " Rough num columns to decide between laptop and big monitor screens
+    let numcol = 2
+    set colorcolumn=81
+    vsp term://bash
+    sp term://docker-compose\ up
+    resize 8
+    wincmd l
+    vertical resize 84
+    edit README.md
+
+    tabe README.md
+    if numcol == 3
+        vsp README.md
+    endif
+    vsp term://bash
+    wincmd l
+    vertical resize 84
+
+    tabe assets/elm/Main.elm
+    vsp assets/elm/DwcaTerms.elm
+    vsp term://bash
+    wincmd l
+    "vsp term://docker-compose\ run\ app\ guard\ --no-bundler-warning
+
+    tabfirst
+endfunction
+
+command! -register Layout call Layout()
+

@@ -1,0 +1,27 @@
+session_secret: <%= ENV["RACKAPP_SESSION_SECRET"] %>
+server: <%= ENV["RACKAPP_SERVER"] %>
+data_sources: <%= ENV["RACKAPP_DATA_SOURCES"] %>
+resolver_url: <%= ENV["RACKAPP_RESOLVER_URL_CLIENT"] %>
+internal_resolver_url: <%= ENV["RACKAPP_RESOLVER_URL_SERVER"] %>
+database:
+  common: &common
+    adapter: postgresql
+    encoding: utf8
+    reconnect: true
+    pool: 5
+    timeout: 5000
+    host: <%= ENV["RACKAPP_DB_HOST"] %>
+    username: <%= ENV["RACKAPP_DB_USERNAME"] %>
+    password: <%= ENV["RACKAPP_DB_PASSWORD"] %>
+
+  development:
+    <<: *common
+    database: gnc_dev
+
+  test:
+    <<: *common
+    database: gnc_test
+
+  production:
+    <<: *common
+    database: gnc

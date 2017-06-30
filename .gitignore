@@ -1,0 +1,53 @@
+## App
+*.csv
+/public/crossmaps/*
+elm-stuff
+elm-package.json
+/public/js/*
+/node_modules
+.byebug_history
+
+## General
+*.gem
+*.rbc
+/myenv.sh
+/.config
+/config/env.sh
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/test/tmp/
+/test/version_tmp/
+/uploads/
+/tmp/
+.sass-cache
+/log/*
+.env.sh
+.coveralls.yml
+tags
+
+## Specific to RubyMotion:
+.dat*
+.repl_history
+build/
+
+## Documentation cache and generated files:
+/.yardoc/
+/_yardoc/
+/doc/
+/rdoc/
+
+## Environment normalisation:
+/.bundle/
+/lib/bundler/man/
+/bundle_bin
+
+# for a library or gem, you might want to ignore these files since the code is
+# intended to run in multiple environments; otherwise, check them in:
+# Gemfile.lock
+# .ruby-version
+# .ruby-gemset
+
+# unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
+.rvmrc

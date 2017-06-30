@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gnlist-db
+  labels:
+    app: gnlist
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: gnlist
+    tier: backend
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gnlist-db
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: gnlist
+      labels:
+        app: gnlist
+        tier: backend
+    spec:
+      volumes:
+        - name: gnlist-vol
+          persistentVolumeClaim:
+            claimName: gnlist-pv-claim
+      containers:
+        - name: gnlist-db
+          image: gnames/postgres-solo
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gnlist
+                  key: root.password
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: gnlist
+                  key: db.user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gnlist
+                  key: db.user.password
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: gnlist
+                  key: db
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - containerPort: 5432
+              name: psql
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: gnlist-vol
