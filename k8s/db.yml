@@ -30,7 +30,7 @@ spec:
       volumes:
         - name: gnlist-vol
           persistentVolumeClaim:
-            claimName: gnlist-pv-claim
+            claimName: gnlist-pvc
       containers:
         - name: gnlist-db
           image: gnames/postgres-solo
