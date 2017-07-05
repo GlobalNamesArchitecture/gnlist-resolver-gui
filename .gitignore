@@ -1,10 +1,6 @@
 ## App
 *.csv
 /public/crossmaps/*
-elm-stuff
-elm-package.json
-/public/js/*
-/node_modules
 .byebug_history
 
 ## General
@@ -51,3 +47,14 @@ build/
 
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
 .rvmrc
+
+# Elm/Webpack/NPM artifacts
+/public/assets
+/public/js/*
+elm-stuff
+/node_modules
+npm-debug.log
+yarn-error.log
+/v8-compile-cache-*
+# generated from Webpack's Elm compilation, e.g. 11766-79-107q5yl.79tp47k3xr.js
+/*.*.js

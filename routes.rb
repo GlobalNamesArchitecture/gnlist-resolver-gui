@@ -1,8 +1,20 @@
 # frozen_string_literal: true
 
+require "rack/reverse_proxy"
+
 module Gnc
   # Sinatra App namespace
   class App < Sinatra::Application
+    if ENV["ASSET_HOST"]
+      use Rack::ReverseProxy do
+        reverse_proxy_options preserve_host: false
+        reverse_proxy(
+          %r{^\/assets(\/.*)$},
+          "http://#{ENV['ASSET_HOST']}/static$1"
+        )
+      end
+    end
+
     get "/css/:filename.css" do
       scss :"sass/#{params[:filename]}"
     end

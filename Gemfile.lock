@@ -106,6 +106,11 @@ GEM
     rack (2.0.3)
     rack-protection (2.0.0)
       rack
+    rack-proxy (0.6.1)
+      rack
+    rack-reverse-proxy (0.12.0)
+      rack (>= 1.0.0)
+      rack-proxy (~> 0.6, >= 0.6.1)
     rack-test (0.6.3)
       rack (>= 1.0)
     rack-timeout (0.4.2)
@@ -218,6 +223,7 @@ DEPENDENCIES
   pg (~> 0.21)
   puma (~> 3.9)
   rack (~> 2.0)
+  rack-reverse-proxy
   rack-test (~> 0.6)
   rack-timeout (~> 0.4)
   rake (~> 12.0)

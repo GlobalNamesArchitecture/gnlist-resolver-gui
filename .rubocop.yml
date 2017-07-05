@@ -3,6 +3,7 @@ AllCops:
     - db/**/*
     - bundle_bin/**/*
     - spec/**/*
+    - node_modules/**/*
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 Style/DotPosition:

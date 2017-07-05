@@ -5,7 +5,8 @@
       List Resolver
     %link{ rel: "stylesheet", href: "/css/app.css", type: "text/css" }
 
-    %script{ src: "/js/Main.js" }
+    = yield_content :head_content
+    %script{ src: "/assets/js/main.js" }
   %body
     .container
       .header

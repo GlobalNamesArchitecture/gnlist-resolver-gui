@@ -1,12 +1,7 @@
-%div{ id: :main } Please make JavaScript available in your browser
+%div{ id: :main }
+  %noscript Please make JavaScript available in your browser
 
-:javascript
-  var $node = document.getElementById("main");
-  $node.textContent = "";
-  var app = Elm.Main.embed($node, {
-    resolverUrl: "#{Gnc.conf.resolver_url}",
-    localDomain: "#{Gnc.conf.server}",
-    dataSourcesIds: #{Gnc.conf.data_sources.to_json},
-  });
-
-%script{ src: "/js/FileUpload.js" }
+- content_for :head_content do
+  %meta{ name: "resolverUrl", value: Gnc.conf.resolver_url }
+  %meta{ name: "localDomain", value: Gnc.conf.server }
+  %meta{ name: "dataSourcesIds", value: Gnc.conf.data_sources.to_json }

@@ -14,20 +14,21 @@ function wait_for_db {
 }
 
 function development {
-  cd /app/assets/elm && elm-make Main.elm --output ../../public/js/Main.js --yes
   cd /app
 
   bundle exec rake db:drop
   bundle exec rake db:create
   bundle exec rake db:migrate
   bundle exec rake db:migrate RACK_ENV=test
-  puma config.ru -b "tcp://0.0.0.0:9292"
-  # rackup -o 0.0.0.0
+  ASSET_HOST="webpack:8080" puma config.ru -b "tcp://0.0.0.0:9292"
 }
 
 function production {
+  cd /app && npm run build && mkdir -p public/assets/js && mv dist/static/js/* public/assets/js
+
+  bundle exec rake db:create || true
   bundle exec rake db:migrate
-  puma -C /app/config/docker/puma.rb
+  RACK_ENV=production puma -C config/docker/puma.rb
 }
 
 
