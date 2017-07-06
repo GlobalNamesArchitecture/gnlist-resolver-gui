@@ -7,6 +7,7 @@ import Navigation exposing (Location)
 import Routing exposing (Route(..))
 import FileUpload.Messages as FUM
 import FileUpload.Update as FUU
+import FileUpload.Models as FUM
 import Terms.Messages as TM
 import Terms.Update as TU
 import Terms.Helper as TH
@@ -104,7 +105,7 @@ updateResolver : RM.Msg -> Model -> ( Model, Cmd Msg )
 updateResolver msg model =
     let
         token =
-            case model.upload.token of
+            case FUM.uploadToken model.upload of
                 Nothing ->
                     ""
 

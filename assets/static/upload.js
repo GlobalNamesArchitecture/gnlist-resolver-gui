@@ -1,39 +1,33 @@
 export default function configureFileUpload(app) {
-  var xhr = new XMLHttpRequest();
-  var file = null;
-
   app.ports.isUploadSupported.subscribe(function () {
-    var uploadable = (xhr && ("upload" in xhr));
+    const xhr = new XMLHttpRequest();
+    const uploadable = xhr && ("upload" in xhr);
     app.ports.uploadIsSupported.send(uploadable);
   });
 
   app.ports.fileSelected.subscribe(function (id) {
-    var $fileInput = document.getElementById(id);
+    const $fileInput = document.getElementById(id);
+    const file = $fileInput.files[0];
+
     if ($fileInput === null) {
       app.ports.fileSelectedData.send(null);
-    }
-
-    file = $fileInput.files[0];
-      var portData = {
+    } else {
+      app.ports.fileSelectedData.send({
         filename: file.name,
         filetype: file.type,
         size: file.size
-      };
-    app.ports.fileSelectedData.send(portData);
+      });
+    }
   });
 
   app.ports.fileUpload.subscribe(function (id) {
-    var formData = new FormData();
-    var action = '/upload';
-    var $fileInput = document.getElementById(id);
-    var file = $fileInput.files[0];
+    const formData = new FormData();
+    const action = '/upload';
+    const $fileInput = document.getElementById(id);
+    const file = $fileInput.files[0];
 
-    function sendFail() {
-      app.ports.fileUploadResult.send(null);
-    }
-
-    function sendXHRequest(formData, uri) {
-      var xhr = new XMLHttpRequest();
+    function sendXHRequest(data, uri) {
+      const xhr = new XMLHttpRequest();
 
       xhr.upload.addEventListener('loadstart', onloadstartHandler, false);
       xhr.upload.addEventListener('progress', onprogressHandler, false);
@@ -43,55 +37,50 @@ export default function configureFileUpload(app) {
 
       try {
         xhr.open('POST', uri, true);
-        xhr.send(formData);
-      }
-      catch(e) {
-        sendFail();
+        xhr.send(data);
+      } catch(e) {
+        app.ports.fileUploadFailed.send("post");
       }
     }
 
     // Handle the start of the transmission
     function onloadstartHandler(evt) {
-      var div = document.getElementById('upload-status');
-      div.innerHTML = 'Upload started.';
+      app.ports.fileUploadStarted.send(null);
     }
 
     // Handle the end of the transmission
     function onloadHandler(evt) {
-      var div = document.getElementById('upload-status');
-      div.innerHTML += '<br>File uploaded. Waiting for response.';
+      app.ports.fileUploadComplete.send(null);
     }
 
     // Handle the progress
     function onprogressHandler(evt) {
-      var div = document.getElementById('progress');
-      var percent = evt.loaded / evt.total * 100;
-      div.innerHTML = 'Progress: ' + percent + '%';
+      app.ports.fileUploadProgress.send([evt.loaded, evt.total]);
     }
 
     function onFailHandler(evt) {
-      sendFail();
+      app.ports.fileUploadFailed.send("xhr");
     }
 
     // Handle the response from the server
     function onreadystatechangeHandler(evt) {
-      var status, text, readyState;
+      let status, text, readyState;
 
       try {
         readyState = evt.target.readyState;
         text = evt.target.responseText;
         status = evt.target.status;
-      }
-      catch(e) {
-        sendFail();
+      } catch(e) {
+        app.ports.fileUploadFailed.send("xhr");
       }
 
-      if (readyState === 4 && status === '200' && evt.target.responseText) {
-        var token = evt.target.responseText
-        if (token !== "FAIL") {
-          app.ports.fileUploadResult.send(token);
+      if (readyState === 4 && status === 200 && evt.target.responseText) {
+        const token = evt.target.responseText;
+
+        if (token === "FAIL") {
+          app.ports.fileUploadFailed.send("server");
         } else {
-          sendFail();
+          app.ports.fileUploadSuccess.send(token);
         }
       }
     }
@@ -100,4 +89,3 @@ export default function configureFileUpload(app) {
     sendXHRequest(formData, action);
   });
 }
-

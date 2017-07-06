@@ -13,8 +13,9 @@ import Html.Attributes
         , hidden
         )
 import Html.Events exposing (on, onClick)
+import Filesize
 import Json.Decode as JD
-import FileUpload.Models exposing (Upload, File)
+import FileUpload.Models exposing (Upload, File, Bytes(..), UploadProgress(..), progressToCompletionPercent)
 import FileUpload.Messages exposing (Msg(..))
 
 
@@ -34,9 +35,7 @@ formUpload upload =
         [ fileInput upload.id
         , uploadButton upload.isSupported upload.file
         , fileDetails upload.file
-        , uploadStats
-        , uploadProgress
-        , uploadResults
+        , uploadStatus upload
         ]
 
 
@@ -81,24 +80,50 @@ fileInput nodeId =
 
 fileDetails : Maybe File -> Html Msg
 fileDetails file =
-    case file of
+    let
+        formattedFileSize (Bytes size) =
+            Filesize.format size
+    in
+        case file of
+            Nothing ->
+                span [] []
+
+            Just f ->
+                p [] [ text <| "File size: " ++ formattedFileSize f.size ]
+
+
+renderNothing : Html a
+renderNothing =
+    text ""
+
+
+uploadStatus : Upload -> Html a
+uploadStatus model =
+    case model.progress of
+        Started ->
+            div [] [ text "Upload started." ]
+
+        Complete ->
+            div [] [ text "File uploaded; waiting for response." ]
+
+        Loading _ _ ->
+            uploadProgress model
+
+        NotStarted ->
+            renderNothing
+
+        Failed _ ->
+            div [] [ text "Upload failed." ]
+
+        Succeeded _ ->
+            div [] [ text "Upload successful." ]
+
+
+uploadProgress : Upload -> Html a
+uploadProgress model =
+    case progressToCompletionPercent model.progress of
+        Just percentage ->
+            div [] [ text <| "Progress: " ++ toString percentage ++ "%" ]
+
         Nothing ->
-            span [] []
-
-        Just f ->
-            p [] [ text <| "File size: " ++ (toString f.size) ++ " bytes" ]
-
-
-uploadStats : Html Msg
-uploadStats =
-    div [ id "upload-status" ] []
-
-
-uploadProgress : Html Msg
-uploadProgress =
-    div [ id "progress" ] []
-
-
-uploadResults : Html Msg
-uploadResults =
-    div [ id "result" ] []
+            renderNothing

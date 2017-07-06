@@ -1,12 +1,16 @@
 module FileUpload.Messages exposing (Msg(..))
 
-import FileUpload.Models exposing (File)
+import FileUpload.Models exposing (JsonFile)
 
 
 type Msg
     = UploadSupported Bool
     | FileSelected
-    | FileSelectedData (Maybe File)
+    | FileSelectedData (Maybe JsonFile)
     | FileUpload
-    | FileUploadResult (Maybe String)
     | EmptyErrors
+    | FileUploadProgress ( Float, Float )
+    | FileUploadStarted ()
+    | FileUploadComplete ()
+    | FileUploadFailed String
+    | FileUploadSuccess String
