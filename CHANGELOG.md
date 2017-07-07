@@ -1,23 +1,15 @@
 # Global Names Crossmap Web CHANGELOG
 
-## 0.0.5 (WORK IN PROGRESS)
 
-## 0.0.4
+## 0.0.1 (2017-07-07)
 
-2016-11-24
+@joshuaclayton -- #10 Add webpack to the project's framework
 
-- @dimus - validation of csv file
-- @dimus - get basic workflow from uploading file to downloading result  #7
-- @dimus - update gems to more recent
+@dimus -- #8 Create [public web-presence][listresolver]
 
-## 0.0.3
+@dimus -- #2 Fork code from [gn_crossmap_web]
 
-- @dimus - Tests and continuous integration with CircleCI
+@dimus -- #9 Collapse history of [gn_crossmap_web] into one commit
 
-## 0.0.2
-
-- @dimus - Docker workflow is set
-
-## 0.0.1
-
-- @dimus - Initial commit
+[listresolver]: http://listresolver.globalnames.org
+[gn_crossmap_web]: https://github.com/GlobalNamesArchitecture/gn_crossmap_web

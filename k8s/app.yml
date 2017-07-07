@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: gnlist
-          image: gnames/listresolver:2017-07-26-1
+          image: gnames/listresolver:2017-07-07-98c89
           livenessProbe:
             httpGet:
               path: /
