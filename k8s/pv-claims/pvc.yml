@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -13,4 +14,34 @@ spec:
     matchLabels:
       name: gnlist-pv
 
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gnlist-results-pvc
+  namespace: gn
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  selector:
+    matchLabels:
+      name: gnlist-results-pv
 
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gnlist-uploads-pvc
+  namespace: gn
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  selector:
+    matchLabels:
+      name: gnlist-uploads-pv

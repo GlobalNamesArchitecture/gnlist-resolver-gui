@@ -13,3 +13,35 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: /tmp/gnlist
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gnlist-uploads-pv
+  labels:
+    name: gnlist-uploads-pv
+spec:
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /tmp/gnlist-uploads
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gnlist-results-pv
+  labels:
+    name: gnlist-results-pv
+spec:
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /tmp/gnlist-results

@@ -20,7 +20,7 @@ kind: Deployment
 metadata:
   name: gnlist
 spec:
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       name: gnlist
@@ -28,6 +28,13 @@ spec:
         app: gnlist
         tier: frontend
     spec:
+      volumes:
+        - name: gnlist-results-vol
+          persistentVolumeClaim:
+            claimName: gnlist-results-pvc
+        - name: gnlist-uploads-vol
+          persistentVolumeClaim:
+            claimName: gnlist-uploads-pvc
       containers:
         - name: gnlist
           image: gnames/listresolver:2017-07-07-98c89
@@ -36,6 +43,12 @@ spec:
               path: /
               port: 9292
             initialDelaySeconds: 60
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9292
+            initialDelaySeconds: 20
             timeoutSeconds: 3
           args:
             - /app/exe/production.sh
@@ -100,3 +113,8 @@ spec:
           ports:
             - containerPort: 9292
               name: http
+          volumeMounts:
+            - mountPath: /app/public/crossmaps
+              name: gnlist-results-vol
+            - mountPath: /app/uploads
+              name: gnlist-uploads-vol
