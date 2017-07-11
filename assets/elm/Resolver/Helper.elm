@@ -1,278 +1,230 @@
 module Resolver.Helper
     exposing
         ( Input
-        , Velocity
-        , queryResolutionProgress
-        , startResolution
+        , ResolverProgress(..)
+        , resolutionResolverProgress
+        , ingestionResolverProgress
         , resolutionInput
         , ingestionInput
-        , estimate
         , etaString
         , summaryString
-        , status
-        , sendStopResolution
         )
 
-import Http
 import Maybe exposing (withDefault, andThen)
-import Helper as H
-import Resolver.Messages exposing (Msg(..))
-import Resolver.Decoder exposing (statusDecoder, statsDecoder)
-import Resolver.Models exposing (Resolver, Stats, Status(..))
-import Resolver.Encoder as RE
+import Resolver.Models exposing (Resolver, Resolution, Ingestion, Stats(..), ProgressMetadata(..), TotalRecordCount(..), ProcessedRecordCount(..))
+import TimeDuration.Model exposing (..)
 
 
 type alias Input =
-    { total : Int, processed : Int, timeSpan : Int, velocity : List Velocity }
+    { total : TotalRecordCount, processed : ProcessedRecordCount, timeSpan : Seconds, velocity : List Velocity }
 
 
 type alias Velocity =
-    { recordsNum : Int, timeSpan : Float }
-
-
-queryResolutionProgress : String -> Cmd Msg
-queryResolutionProgress token =
-    let
-        url =
-            "/stats/" ++ token
-    in
-        Http.send ResolutionProgress
-            (Http.get url statsDecoder)
-
-
-startResolution : String -> Cmd Msg
-startResolution token =
-    let
-        url =
-            "/resolver/" ++ token
-    in
-        Http.send LaunchResolution
-            (Http.get url statusDecoder)
-
-
-sendStopResolution : String -> Cmd Msg
-sendStopResolution token =
-    let
-        url =
-            "/crossmaps"
-    in
-        Http.send StopResolution
-            (H.put url <| RE.body token)
-
-
-type alias WaitTime =
-    { h : Int, m : Int, s : Int }
+    { recordsNum : ProcessedRecordCount, timeSpan : Seconds }
 
 
 type alias Estimate =
-    { namesPerSec : Float, eta : Int, etaFormatted : WaitTime }
+    { namesPerSec : Float, eta : TimeDuration }
 
 
 estimate : Input -> Estimate
-estimate input =
+estimate ({ total, velocity, processed } as input) =
     let
         namesPerSec =
-            normalizeVelocity input.velocity
+            normalizeVelocity velocity
+
+        (TotalRecordCount total_) =
+            total
+
+        (ProcessedRecordCount processed_) =
+            processed
 
         eta =
-            round <|
-                (toFloat (input.total - input.processed))
+            timeToSeconds <|
+                (toFloat (total_ - processed_))
                     / namesPerSec
     in
-        Estimate namesPerSec eta (hrMinSec <| hmsEta eta [ 3600, 60, 1 ] [])
+        Estimate namesPerSec (secondsToTimeDuration eta)
 
 
-etaString : Estimate -> String
-etaString est =
+etaString : Input -> String
+etaString input =
     let
-        t =
-            est.etaFormatted
+        { namesPerSec, eta } =
+            estimate input
     in
         "("
-            ++ (toString (floor est.namesPerSec))
+            ++ toString (floor namesPerSec)
             ++ " names/sec, Est. wait: "
-            ++ (toString t.h)
-            ++ "h, "
-            ++ (toString t.m)
-            ++ "m, "
-            ++ (toString t.s)
-            ++ "s)"
+            ++ waitTimeToString eta
+            ++ ")"
 
 
-ingestionInput : Stats -> Input
-ingestionInput s =
-    let
-        total =
-            s.totalRecords
-
-        processed =
-            s.ingestion.ingestedRecords
-
-        vel =
-            Velocity processed (withDefault 0 s.ingestion.ingestionSpan)
-
-        timeSpan =
-            case s.resolution.resolutionStart of
-                Nothing ->
-                    maybeSubtract
-                        s.ingestion.ingestionSpan
-                        s.ingestion.ingestionStart
-
-                Just ingestionEnd ->
-                    maybeSubtract
-                        s.resolution.resolutionStart
-                        s.ingestion.ingestionStart
-    in
-        Input total processed timeSpan [ vel ]
+hoursToString : Hours -> String
+hoursToString (Hours h) =
+    toString h ++ "h"
 
 
-summaryString : Input -> Bool -> String
-summaryString input stopped =
+minutesToString : Minutes -> String
+minutesToString (Minutes m) =
+    toString m ++ "m"
+
+
+secondsToString : Seconds -> String
+secondsToString (Seconds s) =
+    toString s ++ "s"
+
+
+waitTimeToString : TimeDuration -> String
+waitTimeToString (TimeDuration h m s) =
+    String.join ", " [ hoursToString h, minutesToString m, secondsToString s ]
+
+
+summaryString : Bool -> Input -> String
+summaryString stopped { timeSpan, total, processed } =
     let
         hms =
-            hrMinSec <| hmsEta input.timeSpan [ 3600, 60, 1 ] []
+            secondsToTimeDuration timeSpan
 
-        total =
-            if (stopped) then
-                input.processed
+        (TotalRecordCount total_) =
+            total
+
+        (ProcessedRecordCount processed_) =
+            processed
+
+        processedCount =
+            if stopped then
+                processed_
             else
-                input.total
+                total_
     in
         "("
             ++ "Processed "
-            ++ (toString total)
+            ++ toString processedCount
             ++ " names in "
-            ++ (toString hms.h)
-            ++ "h, "
-            ++ (toString hms.m)
-            ++ "m, "
-            ++ (toString hms.s)
-            ++ "s)"
+            ++ waitTimeToString hms
+            ++ ")"
 
 
-resolutionInput : Stats -> Input
-resolutionInput s =
+ingestionInput : ProgressMetadata -> Ingestion -> Maybe Resolution -> Input
+ingestionInput (ProgressMetadata _ _ totalRecords _) ingestion mresolution =
     let
-        total =
-            s.totalRecords
-
         processed =
-            s.resolution.resolvedRecords
+            ingestion.ingestedRecords
 
-        timeSpan =
-            maybeSubtract
-                (resSpan s)
-                s.resolution.resolutionStart
+        timeSpent =
+            case mresolution of
+                Nothing ->
+                    ingestion.ingestionSpan
+
+                Just resolution ->
+                    timeToSeconds <| resolution.resolutionStart - ingestion.ingestionStart
 
         vel =
-            List.map (\t -> Velocity 200 t) s.lastBatchesTime
+            [ Velocity processed ingestion.ingestionSpan ]
     in
-        Input total processed timeSpan vel
+        Input totalRecords processed timeSpent vel
 
 
-
--- PRIVATE
-
-
-resSpan : Stats -> Maybe Float
-resSpan s =
-    List.maximum <|
-        (withDefault 0 s.resolution.resolutionStop)
-            :: s.lastBatchesTime
-
-
-maybeSubtract : Maybe Float -> Maybe Float -> Int
-maybeSubtract a b =
+resolutionInput : ProgressMetadata -> Resolution -> Maybe Float -> Input
+resolutionInput (ProgressMetadata _ _ totalRecords lastBatchesTime) resolution resolutionStop =
     let
-        a_ =
-            withDefault 0 a
+        processed =
+            resolution.resolvedRecords
 
-        b_ =
-            withDefault 0 b
+        timeSpan =
+            case resolutionStop of
+                Nothing ->
+                    resolution.resolutionSpan
 
-        res =
-            round <| a_ - b_
+                Just stop ->
+                    timeToSeconds <| stop - resolution.resolutionStart
+
+        expectedProcessCountPerSecond =
+            ProcessedRecordCount 200
+
+        vel =
+            List.map (Velocity expectedProcessCountPerSecond) lastBatchesTime
     in
-        if res > 0 then
-            res
-        else
-            0
+        Input totalRecords processed timeSpan vel
+
+
+resSpan : Float -> List Float -> Maybe Float
+resSpan resolutionStop lastBatchesTime =
+    List.maximum <| resolutionStop :: lastBatchesTime
+
+
+occurrencesPerSecond : ProcessedRecordCount -> Seconds -> Float
+occurrencesPerSecond (ProcessedRecordCount occurrences) (Seconds s) =
+    toFloat occurrences / s
+
+
+velocityOccurrencesPerSecond : Velocity -> Float
+velocityOccurrencesPerSecond { recordsNum, timeSpan } =
+    occurrencesPerSecond recordsNum timeSpan
 
 
 normalizeVelocity : List Velocity -> Float
 normalizeVelocity vs =
-    let
-        vSum =
-            List.foldr
-                (\v a -> (toFloat v.recordsNum / v.timeSpan) + a)
-                0
-                vs
-    in
-        vSum / (toFloat <| List.length vs)
+    average <| List.map velocityOccurrencesPerSecond vs
 
 
-hrMinSec : List Int -> WaitTime
-hrMinSec smh =
-    let
-        hr =
-            withDefault 0 <| List.head <| List.drop 2 smh
-
-        min =
-            withDefault 0 <| List.head <| List.drop 1 smh
-
-        sec =
-            withDefault 0 <| List.head smh
-    in
-        WaitTime hr min sec
+average : List Float -> Float
+average xs =
+    List.sum xs / (toFloat <| List.length xs)
 
 
-hmsEta : Int -> List Int -> List Int -> List Int
-hmsEta eta hms res =
-    case hms of
-        [] ->
-            res
-
-        x :: xs ->
-            let
-                split =
-                    splitEta eta x
-            in
-                hmsEta (Tuple.second split) xs ((Tuple.first split) :: res)
+type ResolverProgress a
+    = Pending
+    | InProgress Input
+    | Complete Input
 
 
-splitEta : Int -> Int -> ( Int, Int )
-splitEta eta span =
-    let
-        spanUnits =
-            eta // span
-
-        reminder =
-            rem eta span
-    in
-        ( spanUnits, reminder )
-
-
-status : Resolver -> Status
-status resolver =
-    case resolver.stats of
-        Nothing ->
+ingestionResolverProgress : Resolver -> ResolverProgress Ingestion
+ingestionResolverProgress { stats } =
+    case stats of
+        Unknown ->
             Pending
 
-        Just st ->
-            setStatus st.status
+        NoStatsReceived ->
+            Pending
+
+        PendingResolution _ ->
+            Pending
+
+        Ingesting metadata ingestion ->
+            InProgress <| ingestionInput metadata ingestion Nothing
+
+        Resolving metadata ingestion resolution ->
+            Complete <| ingestionInput metadata ingestion (Just resolution)
+
+        BuildingExcel metadata ingestion resolution _ ->
+            Complete <| ingestionInput metadata ingestion (Just resolution)
+
+        Done metadata ingestion resolution _ ->
+            Complete <| ingestionInput metadata ingestion (Just resolution)
 
 
-setStatus : String -> Status
-setStatus s =
-    if s == "init" then
-        Pending
-    else if s == "ingestion" then
-        InIngestion
-    else if s == "resolution" then
-        InResolution
-    else if s == "finish" then
-        InExcelBuild
-    else if s == "done" then
-        Done
-    else
-        Unknown
+resolutionResolverProgress : Resolver -> ResolverProgress Resolution
+resolutionResolverProgress { stats } =
+    case stats of
+        Unknown ->
+            Pending
+
+        NoStatsReceived ->
+            Pending
+
+        PendingResolution _ ->
+            Pending
+
+        Ingesting _ _ ->
+            Pending
+
+        Resolving metadata _ resolution ->
+            InProgress <| resolutionInput metadata resolution Nothing
+
+        BuildingExcel metadata _ resolution stop ->
+            Complete <| resolutionInput metadata resolution (Just stop)
+
+        Done metadata _ resolution stop ->
+            Complete <| resolutionInput metadata resolution (Just stop)

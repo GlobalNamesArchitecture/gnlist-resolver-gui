@@ -2,12 +2,11 @@ module Update exposing (update)
 
 import Maybe exposing (withDefault)
 import Messages exposing (Msg(..))
-import Models exposing (Model)
+import Models exposing (Model, currentToken)
 import Navigation exposing (Location)
 import Routing exposing (Route(..))
 import FileUpload.Messages as FUM
 import FileUpload.Update as FUU
-import FileUpload.Models as FUM
 import Terms.Messages as TM
 import Terms.Update as TU
 import Terms.Helper as TH
@@ -16,7 +15,7 @@ import Target.Update as DSU
 import Target.Helper as DSH
 import Resolver.Messages as RM
 import Resolver.Update as RU
-import Resolver.Helper as RH
+import Resolver.Api as RA
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -60,7 +59,7 @@ routingCommand model route =
             Cmd.map TargetMsg <| DSH.getDataSources model.resolverUrl
 
         Resolver token ->
-            Cmd.map ResolverMsg <| RH.startResolution token
+            Cmd.map ResolverMsg <| RA.startResolution token
 
         Terms token ->
             if List.isEmpty model.terms.headers then
@@ -105,12 +104,7 @@ updateResolver : RM.Msg -> Model -> ( Model, Cmd Msg )
 updateResolver msg model =
     let
         token =
-            case FUM.uploadToken model.upload of
-                Nothing ->
-                    ""
-
-                Just t ->
-                    t
+            Maybe.withDefault "" <| currentToken model
 
         ( resolverModel, resolverCmd ) =
             RU.update msg model.resolver token

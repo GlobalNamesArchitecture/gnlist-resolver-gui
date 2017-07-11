@@ -1,8 +1,19 @@
-module Resolver.Update exposing (update)
+module Resolver.Update exposing (subscriptions, update)
 
+import Time exposing (Time, millisecond)
 import Resolver.Models exposing (..)
-import Resolver.Helper as RH
 import Resolver.Messages exposing (Msg(..))
+import Resolver.Api exposing (queryResolutionProgress, startResolution, sendStopResolution)
+
+
+subscriptions : Resolver -> Sub Msg
+subscriptions { stats } =
+    case stats of
+        Done _ _ _ _ ->
+            Sub.none
+
+        _ ->
+            Time.every (millisecond * 1000) QueryResolutionProgress
 
 
 update : Msg -> Resolver -> String -> ( Resolver, Cmd Msg )
@@ -15,21 +26,21 @@ update msg resolver token =
             ( resolver, Cmd.none )
 
         QueryResolutionProgress _ ->
-            ( resolver, RH.queryResolutionProgress token )
+            ( resolver, queryResolutionProgress token )
 
         ResolutionProgress (Ok ( stats, errors )) ->
             ( { resolver
-                | stats = Just stats
+                | stats = stats
                 , errors = errors
               }
             , Cmd.none
             )
 
-        ResolutionProgress (Err _) ->
+        ResolutionProgress (Err e) ->
             ( resolver, Cmd.none )
 
         SendStopResolution ->
-            ( resolver, RH.sendStopResolution token )
+            ( resolver, sendStopResolution token )
 
         StopResolution (Ok _) ->
             ( { resolver | stopTrigger = True }, Cmd.none )

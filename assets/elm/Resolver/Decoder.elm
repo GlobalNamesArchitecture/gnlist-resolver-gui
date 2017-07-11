@@ -1,18 +1,79 @@
-module Resolver.Decoder exposing (statusDecoder, statsDecoder)
+module Resolver.Decoder exposing (statsAndErrorsDecoder)
 
 import Json.Decode exposing (..)
+import Time exposing (Time)
 import Errors exposing (Errors, Error)
 import Resolver.Models exposing (..)
+import TimeDuration.Model exposing (..)
 
 
-statusDecoder : Decoder String
-statusDecoder =
-    field "status" string
+statsAndErrorsDecoder : Decoder ( Stats, Errors )
+statsAndErrorsDecoder =
+    map2 (,) statsDecoder errors
 
 
-statsDecoder : Decoder ( Stats, Errors )
+statsDecoder : Decoder Stats
 statsDecoder =
-    map2 (,) stats errors
+    field "status" string
+        |> andThen statusToStatsDecoder
+
+
+statusToStatsDecoder : String -> Decoder Stats
+statusToStatsDecoder status =
+    case status of
+        "init" ->
+            map PendingResolution progressMetadataDecoder
+
+        "ingestion" ->
+            map2 Ingesting progressMetadataDecoder ingestionDecoder
+
+        "resolution" ->
+            map3 Resolving progressMetadataDecoder ingestionDecoder resolutionDecoder
+
+        "finish" ->
+            map4 BuildingExcel progressMetadataDecoder ingestionDecoder resolutionDecoder resolutionStopDecoder
+
+        "done" ->
+            map4 Done progressMetadataDecoder ingestionDecoder resolutionDecoder resolutionStopDecoder
+
+        _ ->
+            succeed Unknown
+
+
+progressMetadataDecoder : Decoder ProgressMetadata
+progressMetadataDecoder =
+    map4 ProgressMetadata matches failureCountDecoder totalRecordCountDecoder lastBatchesTimeDecoder
+
+
+failureCountDecoder : Decoder FailureCount
+failureCountDecoder =
+    map (FailureCount << round) (at [ "matches", "7" ] float)
+
+
+totalRecordCountDecoder : Decoder TotalRecordCount
+totalRecordCountDecoder =
+    map TotalRecordCount (at [ "total_records" ] int)
+
+
+ingestionDecoder : Decoder Ingestion
+ingestionDecoder =
+    map3 Ingestion
+        (at [ "ingested_records" ] processedRecordCountDecoder)
+        (at [ "ingestion_start" ] timeDecoder)
+        (at [ "ingestion_span" ] secondsDecoder)
+
+
+resolutionDecoder : Decoder Resolution
+resolutionDecoder =
+    map3 Resolution
+        (at [ "resolved_records" ] processedRecordCountDecoder)
+        (at [ "resolution_start" ] timeDecoder)
+        (at [ "resolution_span" ] secondsDecoder)
+
+
+processedRecordCountDecoder : Decoder ProcessedRecordCount
+processedRecordCountDecoder =
+    map ProcessedRecordCount int
 
 
 
@@ -38,38 +99,9 @@ error =
     map (Error "A problem with the CSV content") string
 
 
-stats : Decoder Stats
-stats =
-    map7 Stats
-        (at [ "status" ] string)
-        (at [ "total_records" ] int)
-        ingestion
-        resolution
-        lastBatchesTime
-        matches
-        fails
-
-
-lastBatchesTime : Decoder (List Float)
-lastBatchesTime =
-    (at [ "last_batches_time" ] (list float))
-
-
-ingestion : Decoder Ingestion
-ingestion =
-    map3 Ingestion
-        (at [ "ingested_records" ] int)
-        (at [ "ingestion_start" ] (nullable float))
-        (at [ "ingestion_span" ] (nullable float))
-
-
-resolution : Decoder Resolution
-resolution =
-    map4 Resolution
-        (at [ "resolved_records" ] int)
-        (at [ "resolution_start" ] (nullable float))
-        (at [ "resolution_stop" ] (nullable float))
-        (at [ "resolution_span" ] (nullable float))
+lastBatchesTimeDecoder : Decoder (List Seconds)
+lastBatchesTimeDecoder =
+    at [ "last_batches_time" ] (list secondsDecoder)
 
 
 matches : Decoder Matches
@@ -84,6 +116,16 @@ matches =
         (at [ "matches", "6" ] float)
 
 
-fails : Decoder Float
-fails =
-    (at [ "matches", "7" ] float)
+resolutionStopDecoder : Decoder Float
+resolutionStopDecoder =
+    at [ "resolution_stop" ] float
+
+
+timeDecoder : Decoder Time
+timeDecoder =
+    float
+
+
+secondsDecoder : Decoder Seconds
+secondsDecoder =
+    map Seconds float

@@ -7,7 +7,7 @@ import Resolver.Models exposing (Stats)
 
 
 type Msg
-    = LaunchResolution (Result Http.Error String)
+    = LaunchResolution (Result Http.Error ())
     | QueryResolutionProgress Time.Time
     | ResolutionProgress (Result Http.Error ( Stats, Errors ))
     | SendStopResolution

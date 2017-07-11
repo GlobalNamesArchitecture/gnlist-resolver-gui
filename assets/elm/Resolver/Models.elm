@@ -1,49 +1,84 @@
 module Resolver.Models exposing (..)
 
 import Errors exposing (Errors)
+import Time exposing (Time)
+import TimeDuration.Model exposing (Seconds)
 
 
 type alias Resolver =
-    { status : Status
-    , stopTrigger : Bool
-    , stats : Maybe Stats
+    { stopTrigger : Bool
+    , stats : Stats
     , errors : Errors
     }
 
 
-type alias Stats =
-    { status : String
-    , totalRecords : Int
-    , ingestion : Ingestion
-    , resolution : Resolution
-    , lastBatchesTime :
-        List Float
-    , matches : Matches
-    , fails : Float
-    }
+type FailureCount
+    = FailureCount Int
 
 
-type Status
-    = Pending
-    | InIngestion
-    | InResolution
-    | InExcelBuild
-    | Done
-    | Unknown
+type TotalRecordCount
+    = TotalRecordCount Int
+
+
+type ProcessedRecordCount
+    = ProcessedRecordCount Int
+
+
+type ProgressMetadata
+    = ProgressMetadata Matches FailureCount TotalRecordCount (List Seconds)
+
+
+totalRecordCount : ProgressMetadata -> TotalRecordCount
+totalRecordCount (ProgressMetadata _ _ i _) =
+    i
+
+
+metadataFromStats : Stats -> Maybe ProgressMetadata
+metadataFromStats stats =
+    case stats of
+        Unknown ->
+            Nothing
+
+        NoStatsReceived ->
+            Nothing
+
+        PendingResolution m ->
+            Just m
+
+        Ingesting m _ ->
+            Just m
+
+        Resolving m _ _ ->
+            Just m
+
+        BuildingExcel m _ _ _ ->
+            Just m
+
+        Done m _ _ _ ->
+            Just m
+
+
+type Stats
+    = Unknown
+    | NoStatsReceived
+    | PendingResolution ProgressMetadata
+    | Ingesting ProgressMetadata Ingestion
+    | Resolving ProgressMetadata Ingestion Resolution
+    | BuildingExcel ProgressMetadata Ingestion Resolution Float
+    | Done ProgressMetadata Ingestion Resolution Float
 
 
 type alias Ingestion =
-    { ingestedRecords : Int
-    , ingestionStart : Maybe Float
-    , ingestionSpan : Maybe Float
+    { ingestedRecords : ProcessedRecordCount
+    , ingestionStart : Time
+    , ingestionSpan : Seconds
     }
 
 
 type alias Resolution =
-    { resolvedRecords : Int
-    , resolutionStart : Maybe Float
-    , resolutionStop : Maybe Float
-    , resolutionSpan : Maybe Float
+    { resolvedRecords : ProcessedRecordCount
+    , resolutionStart : Time
+    , resolutionSpan : Seconds
     }
 
 
@@ -60,4 +95,4 @@ type alias Matches =
 
 initResolver : Resolver
 initResolver =
-    Resolver Pending False Nothing Nothing
+    Resolver False NoStatsReceived Nothing
