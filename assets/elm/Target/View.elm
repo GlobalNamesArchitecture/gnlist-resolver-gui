@@ -14,6 +14,7 @@ import Html.Attributes
 import Html.Events exposing (onClick, on, targetValue)
 import Json.Decode as J
 import Maybe exposing (withDefault)
+import I18n exposing (Translation(..))
 import Target.Models exposing (Target, DataSources, DataSource)
 import Target.Messages exposing (Msg(..))
 
@@ -22,7 +23,7 @@ view : Target -> String -> Html Msg
 view target token =
     div []
         [ div []
-            [ button [ onClick <| ToResolver token ] [ text "Continue" ]
+            [ button [ onClick <| ToResolver token ] [ text <| I18n.t Continue ]
             ]
         , div []
             [ input
@@ -30,7 +31,7 @@ view target token =
                 , class "target-search"
                 , autofocus True
                 , onInput FilterTarget
-                , placeholder "Search"
+                , placeholder <| I18n.t SearchPlaceholder
                 ]
                 []
             ]

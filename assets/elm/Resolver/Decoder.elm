@@ -107,13 +107,13 @@ lastBatchesTimeDecoder =
 matches : Decoder Matches
 matches =
     map7 Matches
-        (at [ "matches", "0" ] float)
-        (at [ "matches", "1" ] float)
-        (at [ "matches", "2" ] float)
-        (at [ "matches", "3" ] float)
-        (at [ "matches", "4" ] float)
-        (at [ "matches", "5" ] float)
-        (at [ "matches", "6" ] float)
+        (at [ "matches", "0" ] <| map NoMatch float)
+        (at [ "matches", "1" ] <| map ExactString float)
+        (at [ "matches", "2" ] <| map ExactCanonical float)
+        (at [ "matches", "3" ] <| map Fuzzy float)
+        (at [ "matches", "4" ] <| map Partial float)
+        (at [ "matches", "5" ] <| map PartialFuzzy float)
+        (at [ "matches", "6" ] <| map GenusOnly float)
 
 
 resolutionStopDecoder : Decoder Float

@@ -13,7 +13,7 @@ import Html.Attributes
         , hidden
         )
 import Html.Events exposing (on, onClick)
-import Filesize
+import I18n exposing (Translation(..))
 import Json.Decode as JD
 import FileUpload.Models exposing (Upload, File, Bytes(..), UploadProgress(..), progressToCompletionPercent)
 import FileUpload.Messages exposing (Msg(..))
@@ -61,10 +61,7 @@ uploadButton isWorking file =
                 []
         else
             p []
-                [ text <|
-                    "JavaScript-based file upload is not supported, "
-                        ++ "please switch to a more modern browser."
-                ]
+                [ text <| I18n.t JavaScriptFileUploadUnsupported ]
 
 
 fileInput : String -> Html Msg
@@ -80,16 +77,12 @@ fileInput nodeId =
 
 fileDetails : Maybe File -> Html Msg
 fileDetails file =
-    let
-        formattedFileSize (Bytes size) =
-            Filesize.format size
-    in
-        case file of
-            Nothing ->
-                span [] []
+    case file of
+        Nothing ->
+            renderNothing
 
-            Just f ->
-                p [] [ text <| "File size: " ++ formattedFileSize f.size ]
+        Just f ->
+            p [] [ text <| I18n.t (UploadFileSize f.size) ]
 
 
 renderNothing : Html a
@@ -101,10 +94,10 @@ uploadStatus : Upload -> Html a
 uploadStatus model =
     case model.progress of
         Started ->
-            div [] [ text "Upload started." ]
+            div [] [ text <| I18n.t UploadStarted ]
 
         Complete ->
-            div [] [ text "File uploaded; waiting for response." ]
+            div [] [ text <| I18n.t UploadComplete ]
 
         Loading _ _ ->
             uploadProgress model
@@ -113,17 +106,17 @@ uploadStatus model =
             renderNothing
 
         Failed _ ->
-            div [] [ text "Upload failed." ]
+            div [] [ text <| I18n.t UploadFailed ]
 
         Succeeded _ ->
-            div [] [ text "Upload successful." ]
+            div [] [ text <| I18n.t UploadSuccessful ]
 
 
 uploadProgress : Upload -> Html a
 uploadProgress model =
     case progressToCompletionPercent model.progress of
         Just percentage ->
-            div [] [ text <| "Progress: " ++ toString percentage ++ "%" ]
+            div [] [ text <| I18n.t (UploadInProgress percentage) ]
 
         Nothing ->
             renderNothing

@@ -18,6 +18,7 @@ type alias Model =
     , target : Target
     , resolver : Resolver
     , errors : Errors
+    , softwareVersion : String
     }
 
 
@@ -25,6 +26,7 @@ type alias Flags =
     { resolverUrl : String
     , localDomain : String
     , dataSourcesIds : List Int
+    , version : String
     }
 
 
@@ -39,6 +41,7 @@ initModel flags route =
         (initTarget flags.dataSourcesIds)
         initResolver
         Nothing
+        flags.version
 
 
 currentToken : Model -> Maybe String

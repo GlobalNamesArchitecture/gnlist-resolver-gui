@@ -5,6 +5,7 @@ import Html.Events exposing (onClick, on, targetValue)
 import Html.Attributes exposing (class, value, id, list)
 import Json.Decode as J
 import Terms.Models exposing (Terms, Term, Header, Row, allTermValues)
+import I18n exposing (Translation(..))
 import Terms.Messages exposing (Msg(..))
 import Target.Models exposing (DataSources)
 
@@ -12,8 +13,8 @@ import Target.Models exposing (DataSources)
 view : DataSources -> Terms -> String -> Html Msg
 view ds terms token =
     div []
-        [ button [ onClick (nextMsg ds token) ] [ text "Continue" ]
-        , div [ class "terms_table_container" ]
+        [ button [ onClick (nextMsg ds token) ] [ text <| I18n.t Continue ]
+        , div [ (class "terms_table_container") ]
             [ table [ class "terms_table" ] <|
                 viewHeaders terms.headers
                     :: (viewSelectors token terms :: viewRows terms.rows)
@@ -37,7 +38,7 @@ viewSelectors token terms =
 viewSelector : String -> Terms -> Header -> Html Msg
 viewSelector token terms header =
     td [ class "terms_selector" ]
-        [ text <| "match with"
+        [ text <| I18n.t TermMatchWithHeader
         , br [] []
         , input
             [ list "terms"
@@ -52,7 +53,7 @@ viewSelector token terms header =
             [ class "delete-button"
             , onClick (MapTerm token header.id "")
             ]
-            [ text "✖" ]
+            [ text <| I18n.t CloseButton ]
         ]
 
 
@@ -134,7 +135,7 @@ viewHeaderEntry header =
                     header.value
 
                 Just term ->
-                    header.value ++ " → " ++ term
+                    I18n.t <| TermTranslationHeader header.value term
         ]
 
 

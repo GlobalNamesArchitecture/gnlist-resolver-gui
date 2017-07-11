@@ -8,23 +8,4 @@
     = yield_content :head_content
     %script{ src: "/assets/js/main.js" }
   %body
-    .container
-      .header
-        %h1{ id: "title" }
-          %a{ href: "/" } Global Names List Resolver
-        .menu
-          %ul
-            %li
-              %a{ href: "/" } Home
-    .container
-      #content
-        = yield
-
-    .container
-      #footer{style: "padding-left: 21.5em"}
-        %a{ href: "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/blob/master/LICENSE" }
-          MIT License
-        |
-        %a{ href: "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/releases" }
-          Version
-          = Gnc.version
+    = yield

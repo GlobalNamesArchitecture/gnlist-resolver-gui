@@ -2,6 +2,7 @@ module Widgets.BreadCrumbs exposing (view)
 
 import Html exposing (..)
 import Html.Attributes exposing (class)
+import I18n exposing (Translation(..))
 import Routing exposing (Route(..))
 import Models exposing (Model)
 
@@ -14,10 +15,10 @@ view model =
 
 stages : List ( Int, String )
 stages =
-    [ ( 0, "Upload a File" )
-    , ( 1, "Map Headers" )
-    , ( 2, "Pick Referene Data" )
-    , ( 3, "Crossmap Names" )
+    [ ( 0, I18n.t BreadcrumbUploadFile )
+    , ( 1, I18n.t BreadcrumbMapHeaders )
+    , ( 2, I18n.t BreadcrumbPickReferenceData )
+    , ( 3, I18n.t BreadcrumbCrossmapNames )
     ]
 
 

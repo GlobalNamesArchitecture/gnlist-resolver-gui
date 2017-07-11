@@ -6,8 +6,6 @@ module Resolver.Helper
         , ingestionResolverProgress
         , resolutionInput
         , ingestionInput
-        , etaString
-        , summaryString
         )
 
 import Resolver.Models exposing (Resolver, Resolution, Ingestion, Stats(..), ProgressMetadata(..), TotalRecordCount(..), ProcessedRecordCount(..))
@@ -19,6 +17,7 @@ type alias Input =
     , processed : ProcessedRecordCount
     , timeSpan : Seconds
     , velocity : List Velocity
+    , estimate : Estimate
     }
 
 
@@ -34,8 +33,8 @@ type alias Estimate =
     }
 
 
-estimate : Input -> Estimate
-estimate { total, velocity, processed } =
+estimate : TotalRecordCount -> ProcessedRecordCount -> List Velocity -> Estimate
+estimate total processed velocity =
     let
         namesPerSec =
             normalizeVelocity velocity
@@ -52,56 +51,6 @@ estimate { total, velocity, processed } =
                     / namesPerSec
     in
         Estimate namesPerSec (secondsToTimeDuration eta)
-
-
-etaString : Input -> String
-etaString input =
-    let
-        { namesPerSec, eta } =
-            estimate input
-    in
-        "("
-            ++ toString (floor namesPerSec)
-            ++ " names/sec, Est. wait: "
-            ++ waitTimeToString eta
-            ++ ")"
-
-
-hoursToString : Hours -> String
-hoursToString (Hours h) =
-    toString h ++ "h"
-
-
-minutesToString : Minutes -> String
-minutesToString (Minutes m) =
-    toString m ++ "m"
-
-
-secondsToString : Seconds -> String
-secondsToString (Seconds s) =
-    toString s ++ "s"
-
-
-waitTimeToString : TimeDuration -> String
-waitTimeToString (TimeDuration h m s) =
-    String.join ", " [ hoursToString h, minutesToString m, secondsToString s ]
-
-
-summaryString : Input -> String
-summaryString { timeSpan, processed } =
-    let
-        hms =
-            secondsToTimeDuration timeSpan
-
-        (ProcessedRecordCount processed_) =
-            processed
-    in
-        "("
-            ++ "Processed "
-            ++ toString processed_
-            ++ " names in "
-            ++ waitTimeToString hms
-            ++ ")"
 
 
 ingestionInput : ProgressMetadata -> Ingestion -> Maybe Resolution -> Input
@@ -121,7 +70,7 @@ ingestionInput (ProgressMetadata _ _ totalRecords _) ingestion mresolution =
         vel =
             [ Velocity processed ingestion.ingestionSpan ]
     in
-        Input totalRecords processed timeSpent vel
+        Input totalRecords processed timeSpent vel (estimate totalRecords processed vel)
 
 
 resolutionInput : ProgressMetadata -> Resolution -> Maybe Float -> Input
@@ -144,7 +93,7 @@ resolutionInput (ProgressMetadata _ _ totalRecords lastBatchesTime) resolution r
         vel =
             List.map (Velocity expectedProcessCountPerSecond) lastBatchesTime
     in
-        Input totalRecords processed timeSpan vel
+        Input totalRecords processed timeSpan vel (estimate totalRecords processed vel)
 
 
 occurrencesPerSecond : ProcessedRecordCount -> Seconds -> Float

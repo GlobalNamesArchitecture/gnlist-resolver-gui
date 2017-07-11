@@ -83,16 +83,83 @@ type alias Resolution =
 
 
 type alias Matches =
-    { noMatch : Float
-    , exactString : Float
-    , exactCanonical : Float
-    , fuzzy : Float
-    , partial : Float
-    , partialFuzzy : Float
-    , genusOnly : Float
+    { noMatch : NoMatch
+    , exactString : ExactString
+    , exactCanonical : ExactCanonical
+    , fuzzy : Fuzzy
+    , partial : Partial
+    , partialFuzzy : PartialFuzzy
+    , genusOnly : GenusOnly
     }
+
+
+type MatchType
+    = NoMatchMatch NoMatch
+    | ExactStringMatch ExactString
+    | ExactCanonicalMatch ExactCanonical
+    | FuzzyMatch Fuzzy
+    | PartialMatch Partial
+    | PartialFuzzyMatch PartialFuzzy
+    | GenusOnlyMatch GenusOnly
+    | ResolverErrorsMatch Float
+
+
+type NoMatch
+    = NoMatch Float
+
+
+type ExactString
+    = ExactString Float
+
+
+type ExactCanonical
+    = ExactCanonical Float
+
+
+type Fuzzy
+    = Fuzzy Float
+
+
+type Partial
+    = Partial Float
+
+
+type PartialFuzzy
+    = PartialFuzzy Float
+
+
+type GenusOnly
+    = GenusOnly Float
 
 
 initResolver : Resolver
 initResolver =
     Resolver False NoStatsReceived Nothing
+
+
+matchTypeValueToFloat : MatchType -> Float
+matchTypeValueToFloat matchType =
+    case matchType of
+        NoMatchMatch (NoMatch v) ->
+            v
+
+        ExactStringMatch (ExactString v) ->
+            v
+
+        ExactCanonicalMatch (ExactCanonical v) ->
+            v
+
+        FuzzyMatch (Fuzzy v) ->
+            v
+
+        PartialMatch (Partial v) ->
+            v
+
+        PartialFuzzyMatch (PartialFuzzy v) ->
+            v
+
+        GenusOnlyMatch (GenusOnly v) ->
+            v
+
+        ResolverErrorsMatch v ->
+            v

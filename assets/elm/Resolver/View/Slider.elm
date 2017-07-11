@@ -5,9 +5,10 @@ module Resolver.View.Slider
         )
 
 import Html exposing (Html, text)
+import I18n exposing (Translation(..))
 import Widgets.Slider as Slider
 import Widgets.Pie as Pie
-import Resolver.Models exposing (Resolution, Ingestion, ProgressMetadata(..), Matches, Stats(..), FailureCount(..), TotalRecordCount(..), ProcessedRecordCount(..), Resolver, metadataFromStats)
+import Resolver.Models exposing (..)
 import Resolver.Helper exposing (ResolverProgress(..))
 
 
@@ -16,7 +17,7 @@ type HexColor
 
 
 type PieChartLegend
-    = PieChartLegend HexColor Float String
+    = PieChartLegend HexColor MatchType
 
 
 buildSlider : ResolverProgress a -> Html b
@@ -56,13 +57,13 @@ viewGraph { stats } =
 
 
 legendToDatum : PieChartLegend -> Pie.PieDatum
-legendToDatum (PieChartLegend (HexColor color) value legend) =
-    Pie.PieDatum color value legend
+legendToDatum (PieChartLegend (HexColor color) value) =
+    Pie.PieDatum color (matchTypeValueToFloat value) (I18n.t <| PieChartLegendText value)
 
 
 legendValueAboveMinimumThreshold : PieChartLegend -> Bool
-legendValueAboveMinimumThreshold (PieChartLegend _ value _) =
-    value > 0.05
+legendValueAboveMinimumThreshold (PieChartLegend _ value) =
+    matchTypeValueToFloat value > 0.05
 
 
 chartData : ProgressMetadata -> Html a
@@ -70,14 +71,14 @@ chartData (ProgressMetadata matches (FailureCount fails) _ _) =
     let
         results =
             List.filter legendValueAboveMinimumThreshold
-                [ PieChartLegend (HexColor "#080") matches.exactString "Identical"
-                , PieChartLegend (HexColor "#0f0") matches.exactCanonical "Canonical match"
-                , PieChartLegend (HexColor "#8f0") matches.fuzzy "Fuzzy match"
-                , PieChartLegend (HexColor "#8f8") matches.partial "Partial match"
-                , PieChartLegend (HexColor "#888") matches.partialFuzzy "Partial fuzzy match"
-                , PieChartLegend (HexColor "#daa") matches.genusOnly "Genus-only match"
-                , PieChartLegend (HexColor "#000") (toFloat fails) "Resolver Errors"
-                , PieChartLegend (HexColor "#a00") matches.noMatch "No match"
+                [ PieChartLegend (HexColor "#080") (ExactStringMatch matches.exactString)
+                , PieChartLegend (HexColor "#0f0") (ExactCanonicalMatch matches.exactCanonical)
+                , PieChartLegend (HexColor "#8f0") (FuzzyMatch matches.fuzzy)
+                , PieChartLegend (HexColor "#8f8") (PartialMatch matches.partial)
+                , PieChartLegend (HexColor "#888") (PartialFuzzyMatch matches.partialFuzzy)
+                , PieChartLegend (HexColor "#daa") (GenusOnlyMatch matches.genusOnly)
+                , PieChartLegend (HexColor "#000") (ResolverErrorsMatch <| toFloat fails)
+                , PieChartLegend (HexColor "#a00") (NoMatchMatch matches.noMatch)
                 ]
     in
         if List.isEmpty results then

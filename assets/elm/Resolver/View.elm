@@ -3,6 +3,7 @@ module Resolver.View exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (style, alt, href)
 import Html.Events exposing (onClick)
+import I18n exposing (Translation(..))
 import Terms.Models exposing (Terms)
 import Target.Models exposing (DataSource)
 import Resolver.Models
@@ -30,19 +31,16 @@ view resolver ds terms =
 
 
 viewTitle : DataSource -> Html a
-viewTitle { title } =
+viewTitle ds =
     h3 []
-        [ text <|
-            "Crossmapping your file against \""
-                ++ Maybe.withDefault "Unknown" title
-                ++ "\" data"
+        [ text <| I18n.t (CrossmappingHeader ds)
         ]
 
 
 viewIngestionStage : ResolverProgress Ingestion -> Html a
 viewIngestionStage resolverProgress =
     div []
-        [ div [] [ text <| "Ingestion Status: " ++ resolverStatus resolverProgress ]
+        [ div [] [ text <| I18n.t IngestionStatus ++ " " ++ I18n.t (ResolverStatus resolverProgress) ]
         , buildSlider resolverProgress
         ]
 
@@ -50,22 +48,9 @@ viewIngestionStage resolverProgress =
 viewResolutionStage : ResolverProgress Resolution -> Html a
 viewResolutionStage resolverProgress =
     div []
-        [ div [] [ text <| "Resolution Status: " ++ resolverStatus resolverProgress ]
+        [ div [] [ text <| I18n.t ResolutionStatus ++ " " ++ I18n.t (ResolverStatus resolverProgress) ]
         , buildSlider resolverProgress
         ]
-
-
-resolverStatus : ResolverProgress a -> String
-resolverStatus resolverProgress =
-    case resolverProgress of
-        Pending ->
-            "Pending"
-
-        InProgress input ->
-            "In Progress " ++ RH.etaString input
-
-        Complete input ->
-            "Done " ++ RH.summaryString input
 
 
 viewDownload : Resolver -> Terms -> Html Msg
@@ -86,9 +71,9 @@ downloadOutputLinks terms { stopTrigger } =
     let
         msg =
             if stopTrigger then
-                "Download partial crossmapping results: "
+                I18n.t DownloadPartialCrossmapping
             else
-                "Download crossmapping results: "
+                I18n.t DownloadCompletedCrossmapping
 
         csvOutput =
             terms.output
@@ -106,19 +91,19 @@ downloadOutputLinks terms { stopTrigger } =
             [ text msg
             , a
                 [ href csvOutput
-                , alt "CSV file"
+                , alt <| I18n.t DownloadText ++ " " ++ I18n.t CSVDownloadLink
                 , style
                     [ ( "color", "#22c" ) ]
                 ]
-                [ text "CSV" ]
+                [ text <| I18n.t CSVDownloadLink ]
             , text " "
             , a
                 [ href excelOutput
-                , alt "XSLX"
+                , alt <| I18n.t DownloadText ++ " " ++ I18n.t XLSXDownloadLink
                 , style
                     [ ( "color", "#22c" ) ]
                 ]
-                [ text "XSLX" ]
+                [ text <| I18n.t XLSXDownloadLink ]
             ]
 
 
@@ -132,6 +117,6 @@ cancelResolution =
         ]
         [ button
             [ onClick SendStopResolution ]
-            [ text "Cancel" ]
-        , text " (with download of a partial result)"
+            [ text <| I18n.t CancelResolution ]
+        , text <| " (" ++ I18n.t CancelResolutionInformation ++ ")"
         ]

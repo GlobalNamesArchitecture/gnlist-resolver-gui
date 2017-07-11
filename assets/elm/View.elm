@@ -3,10 +3,12 @@ module View exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import View.Layout exposing (layout)
 import Markdown
 import Models exposing (Model)
 import Messages exposing (Msg(..))
 import Routing as R
+import I18n exposing (Translation(..))
 import Errors exposing (Errors, Error)
 import FileUpload.View as FUV
 import Terms.View as TV
@@ -18,11 +20,12 @@ import Widgets.BreadCrumbs as BC
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ BC.view model
-        , viewErrors model
-        , findRoute model
-        ]
+    layout model <|
+        div []
+            [ BC.view model
+            , viewErrors model
+            , findRoute model
+            ]
 
 
 findRoute : Model -> Html Msg
@@ -41,7 +44,7 @@ findRoute model =
             resolverView model
 
         R.NotFoundRoute ->
-            text "404 Not found"
+            text <| I18n.t RouteNotFound
 
 
 fileUploadView : Model -> Html Msg
@@ -89,7 +92,7 @@ viewErrors : Model -> Html Msg
 viewErrors model =
     case errors model of
         Nothing ->
-            div [] [ text "No errors" ]
+            div [] [ text <| I18n.t NoErrors ]
 
         Just es ->
             let
@@ -109,4 +112,4 @@ viewError er =
 
 errorButton : Html Msg
 errorButton =
-    div [] [ button [ onClick EmptyErrors ] [ text "OK" ] ]
+    div [] [ button [ onClick EmptyErrors ] [ text <| I18n.t DismissErrors ] ]
