@@ -1,6 +1,6 @@
 module FileUpload.Update exposing (update, subscriptions)
 
-import Navigation exposing (newUrl)
+import Routing exposing (Route(Terms), navigateTo)
 import FileUpload.Models exposing (Upload, File, UploadProgress(..), Loaded(..), Total(..), UploadFailure(..), Token(..), jsonFileToFile)
 import FileUpload.Messages exposing (Msg(..))
 import FileUpload.Ports exposing (..)
@@ -50,7 +50,7 @@ update msg upload =
 
         FileUploadSuccess token ->
             ( { upload | progress = Succeeded (Token token) }
-            , tokenCmd token
+            , navigateTo <| Terms token
             )
 
         EmptyErrors ->
@@ -68,11 +68,6 @@ errBody =
 contains some errors.  Try to verify the file with a
 [CSV checker](https://csvlint.io/). Also make sure that your encoding
 is UTF-8."""
-
-
-tokenCmd : String -> Cmd Msg
-tokenCmd token =
-    newUrl <| "/#terms/" ++ token
 
 
 parseFailureType : String -> UploadFailure

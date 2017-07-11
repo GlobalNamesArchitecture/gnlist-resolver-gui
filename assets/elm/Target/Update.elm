@@ -1,6 +1,6 @@
 module Target.Update exposing (update)
 
-import Navigation exposing (newUrl)
+import Routing exposing (Route(Resolver), navigateTo)
 import Json.Encode as Encode
 import Http
 import Helper as H
@@ -22,7 +22,7 @@ update msg ds =
             ( ds, Cmd.none )
 
         ToResolver token ->
-            ( ds, newUrl <| "/#resolver/" ++ token )
+            ( ds, navigateTo <| Resolver token )
 
         CurrentTarget token current ->
             ( { ds | current = current }, saveTarget token current )
