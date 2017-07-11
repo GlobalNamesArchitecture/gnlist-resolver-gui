@@ -1,6 +1,6 @@
 module Terms.Update exposing (update)
 
-import Navigation exposing (newUrl)
+import Routing exposing (Route(Target, Resolver), navigateTo)
 import Maybe exposing (withDefault)
 import Http
 import Helper as H
@@ -23,10 +23,10 @@ update msg terms =
                 ( { terms | headers = headers }, saveTerms token termsList )
 
         ToDataSources token ->
-            ( terms, newUrl <| "/#target/" ++ token )
+            ( terms, navigateTo <| Target token )
 
         ToResolver token ->
-            ( terms, newUrl <| "/#resolver/" ++ token )
+            ( terms, navigateTo <| Resolver token )
 
         GetTerms (Ok newTerms) ->
             ( newTerms, Cmd.none )

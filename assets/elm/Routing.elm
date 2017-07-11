@@ -1,6 +1,6 @@
-module Routing exposing (..)
+module Routing exposing (Token, Route(..), navigateTo, parseLocation)
 
-import Navigation exposing (Location)
+import Navigation exposing (Location, newUrl)
 import UrlParser exposing (..)
 
 
@@ -16,6 +16,40 @@ type Route
     | NotFoundRoute
 
 
+navigateTo : Route -> Cmd a
+navigateTo =
+    newUrl << urlFor
+
+
+urlFor : Route -> String
+urlFor r =
+    case r of
+        FileUpload ->
+            "/"
+
+        Terms token ->
+            "/#terms/" ++ token
+
+        Target token ->
+            "/#target/" ++ token
+
+        Resolver token ->
+            "/#resolver/" ++ token
+
+        NotFoundRoute ->
+            "/#404"
+
+
+parseLocation : Location -> Route
+parseLocation location =
+    case parseHash matchers location of
+        Just route ->
+            route
+
+        Nothing ->
+            NotFoundRoute
+
+
 matchers : Parser (Route -> a) a
 matchers =
     oneOf
@@ -24,13 +58,3 @@ matchers =
         , map Target (s "target" </> string)
         , map Resolver (s "resolver" </> string)
         ]
-
-
-parseLocation : Location -> Route
-parseLocation location =
-    case (parseHash matchers location) of
-        Just route ->
-            route
-
-        Nothing ->
-            NotFoundRoute
