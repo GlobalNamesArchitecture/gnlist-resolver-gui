@@ -31,7 +31,7 @@ getDataSources : String -> Cmd Msg
 getDataSources url =
     let
         datasourceUrl =
-            (Debug.log "url" url) ++ "/data_sources.json"
+            url ++ "/data_sources.json"
     in
         Http.send AllDataSources (Http.get datasourceUrl dataSourceDecoder)
 

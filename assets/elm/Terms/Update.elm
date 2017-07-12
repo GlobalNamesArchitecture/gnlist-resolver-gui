@@ -5,7 +5,8 @@ import Maybe exposing (withDefault)
 import Http
 import Helper as H
 import Terms.Messages exposing (Msg(..))
-import Terms.Models exposing (Terms, Header)
+import Terms.Models exposing (Terms, Term, Header)
+import Terms.Decoder exposing (workflow, normalize, matchTerm)
 import Terms.Encoder as TE
 
 
@@ -35,10 +36,56 @@ update msg terms =
             ( terms, Cmd.none )
 
         SaveTerms (Ok _) ->
-            ( terms, Cmd.none )
+            let
+                ( newWorkflowTerms, newHeaders ) =
+                    determineWorkflow terms
+            in
+                ( { terms
+                    | workflowTerms = newWorkflowTerms
+                    , headers = newHeaders
+                  }
+                , Cmd.none
+                )
 
         SaveTerms (Err _) ->
             ( terms, Cmd.none )
+
+
+determineWorkflow : Terms -> ( List Term, List Header )
+determineWorkflow terms =
+    let
+        normalizedHeaderTermValues =
+            List.map (\h -> normalize <|
+              withDefault "" h.term) terms.headers
+
+
+        updatedTerms = workflow normalizedHeaderTermValues
+
+        updatedHeaders =
+            List.map (changeHeadersTerms updatedTerms) terms.headers
+    in
+        ( updatedTerms, updatedHeaders )
+
+
+changeHeadersTerms : List Term -> Header -> Header
+changeHeadersTerms terms header =
+    let
+        headerTerm =
+            Maybe.withDefault "" header.term
+    in
+        if List.any (\t -> t.value == headerTerm) terms then
+            header
+        else
+            Header header.id header.value Nothing
+
+tryAddTerm : List Term -> Header -> Header
+tryAddTerm terms header =
+  let
+      term = matchTerm header.value terms
+  in
+      case term of
+        Nothing -> header
+        Just _ -> Header header.id header.value term
 
 
 updateHeaders : List Header -> Int -> String -> List Header
