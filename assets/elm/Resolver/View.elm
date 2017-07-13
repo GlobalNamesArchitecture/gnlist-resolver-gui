@@ -54,10 +54,10 @@ viewResolverProgress resolverProgress inProgressFormatter completeFormatter =
 
 
 viewIngestionStage : Resolver -> ResolverProgress Ingestion -> Html a
-viewIngestionStage resolver resolverProgress =
+viewIngestionStage ({ stopTrigger } as resolver) resolverProgress =
     let
         ingestionStatus =
-            viewResolverProgress resolverProgress RH.etaString RH.etaString
+            resolverStatus resolver resolverProgress
     in
         div []
             [ div [] [ text <| "Ingestion Status: " ++ ingestionStatus ]
@@ -69,12 +69,17 @@ viewResolutionStage : Resolver -> ResolverProgress Resolution -> Html a
 viewResolutionStage ({ stopTrigger } as resolver) resolverProgress =
     let
         resolutionStatus =
-            viewResolverProgress resolverProgress RH.etaString (RH.summaryString stopTrigger)
+            resolverStatus resolver resolverProgress
     in
         div []
             [ div [] [ text <| "Resolution Status: " ++ resolutionStatus ]
             , buildSlider resolverProgress
             ]
+
+
+resolverStatus : Resolver -> ResolverProgress a -> String
+resolverStatus { stopTrigger } resolverProgress =
+    viewResolverProgress resolverProgress RH.etaString (RH.summaryString stopTrigger)
 
 
 viewDownload : Resolver -> Terms -> Html Msg
