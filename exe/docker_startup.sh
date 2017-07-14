@@ -26,7 +26,6 @@ function development {
 function production {
   cd /app && npm run build && mkdir -p public/assets/js && mv dist/static/js/* public/assets/js
 
-  bundle exec rake db:create || true
   bundle exec rake db:migrate
   RACK_ENV=production puma -C config/docker/puma.rb
 }

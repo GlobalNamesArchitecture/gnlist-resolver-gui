@@ -7,7 +7,7 @@
   "repository": "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui",
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
-    "build": "yarn && npm i rimraf && rimraf public/assets/js/main.js && rimraf dist/static/js/main.js && webpack",
+    "build": "rm -rf node_modules && npm i rimraf && rimraf public/assets/js/main.js && rimraf dist/static/js/main.js && yarn && webpack",
     "refresh": "rm -rf node_modules && yarn --force"
   },
   "devDependencies": {

@@ -28,7 +28,7 @@ ENV LC_ALL en_US.UTF-8
 
 RUN echo 'gem: --no-rdoc --no-ri >> "$HOME/.gemrc"'
 
-RUN gem install --no-rdoc --no-ri bundler guard guard-shell && \
+RUN gem install --no-rdoc --no-ri bundler && \
     mkdir /app && mkdir /var/run/sshd
 WORKDIR /app
 COPY Gemfile Gemfile

@@ -37,7 +37,7 @@ spec:
             claimName: gnlist-uploads-pvc
       containers:
         - name: gnlist
-          image: gnames/listresolver:2017-07-14-126b5
+          image: gnames/listresovler:2017-07-14-e0e109c
           livenessProbe:
             httpGet:
               path: /
@@ -48,10 +48,8 @@ spec:
             httpGet:
               path: /
               port: 9292
-            initialDelaySeconds: 20
+            initialDelaySeconds: 60
             timeoutSeconds: 3
-          args:
-            - /app/exe/production.sh
           env:
             - name: CODECLIMATE_REPO_TOKEN
               valueFrom:
