@@ -45,7 +45,7 @@ secondsToTimeDuration seconds =
 
 hoursFromSeconds : Seconds -> Hours
 hoursFromSeconds (Seconds s) =
-    Hours <| (round s) // 3600
+    Hours <| round s // 3600
 
 
 minutesFromSeconds : Seconds -> Minutes

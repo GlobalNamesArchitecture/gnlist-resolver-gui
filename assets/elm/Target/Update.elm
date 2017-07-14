@@ -1,7 +1,6 @@
 module Target.Update exposing (update)
 
 import Routing exposing (Route(Resolver), navigateTo)
-import Json.Encode as Encode
 import Http
 import Helper as H
 import Target.Models exposing (Target)
@@ -45,12 +44,3 @@ saveTarget token targetId =
     in
         Http.send SaveTarget
             (H.put url <| TE.body token targetId)
-
-
-body : String -> Int -> Http.Body
-body token targetId =
-    Http.jsonBody <|
-        Encode.object
-            [ ( "token", Encode.string token )
-            , ( "data_source_id", Encode.int targetId )
-            ]

@@ -62,14 +62,6 @@ update msg upload =
             )
 
 
-errBody : String
-errBody =
-    """Looks like the uploaded file is either not in a CSV format, or it
-contains some errors.  Try to verify the file with a
-[CSV checker](https://csvlint.io/). Also make sure that your encoding
-is UTF-8."""
-
-
 parseFailureType : String -> UploadFailure
 parseFailureType failureType =
     case failureType of

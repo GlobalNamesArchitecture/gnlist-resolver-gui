@@ -2,8 +2,7 @@ module Terms.View exposing (view)
 
 import Html exposing (..)
 import Html.Events exposing (onClick, on, targetValue)
-import Html.Attributes exposing (class, value, id, name, list, type_)
-import Maybe exposing (withDefault)
+import Html.Attributes exposing (class, value, id, list)
 import Json.Decode as J
 import Terms.Models exposing (Terms, Term, Header, Row, allTermValues)
 import Terms.Messages exposing (Msg(..))
@@ -14,12 +13,10 @@ view : DataSources -> Terms -> String -> Html Msg
 view ds terms token =
     div []
         [ button [ onClick (nextMsg ds token) ] [ text "Continue" ]
-        , div [ (class "terms_table_container") ]
+        , div [ class "terms_table_container" ]
             [ table [ class "terms_table" ] <|
-                (viewHeaders terms.headers)
-                    :: ((viewSelectors token terms)
-                            :: (viewRows terms.rows)
-                       )
+                viewHeaders terms.headers
+                    :: (viewSelectors token terms :: viewRows terms.rows)
             ]
         ]
 
@@ -44,7 +41,7 @@ viewSelector token terms header =
         , br [] []
         , input
             [ list "terms"
-            , id <| "term_" ++ (toString header.id)
+            , id <| "term_" ++ toString header.id
             , value <| Maybe.withDefault "" header.term
             , onInput <| MapTerm token header.id
             , onChange <| MapTerm token header.id
@@ -65,7 +62,7 @@ termValues terms =
 
 
 filterTerms : Terms -> List Term
-filterTerms terms = 
+filterTerms terms =
     let
         collectTerms header xs =
             case header.term of
@@ -82,7 +79,7 @@ filterTerms terms =
 
 
 unusedTerm : List String -> Term -> Bool
-unusedTerm headersTerms term = 
+unusedTerm headersTerms term =
     case headersTerms of
         [] ->
             True

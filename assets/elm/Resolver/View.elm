@@ -3,7 +3,6 @@ module Resolver.View exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (style, alt, href)
 import Html.Events exposing (onClick)
-import Maybe exposing (withDefault)
 import Terms.Models exposing (Terms)
 import Target.Models exposing (DataSource)
 import Resolver.Models
@@ -22,64 +21,51 @@ import Resolver.View.Slider exposing (..)
 view : Resolver -> DataSource -> Terms -> Html Msg
 view resolver ds terms =
     div []
-        [ viewTitle resolver ds
-        , viewIngestionStage resolver (ingestionResolverProgress resolver)
-        , viewResolutionStage resolver (resolutionResolverProgress resolver)
+        [ viewTitle ds
+        , viewIngestionStage <| ingestionResolverProgress resolver
+        , viewResolutionStage <| resolutionResolverProgress resolver
         , viewGraph resolver
         , viewDownload resolver terms
         ]
 
 
-viewTitle : Resolver -> DataSource -> Html a
-viewTitle model { title } =
+viewTitle : DataSource -> Html a
+viewTitle { title } =
     h3 []
         [ text <|
             "Crossmapping your file against \""
-                ++ (withDefault "Unknown" title)
+                ++ Maybe.withDefault "Unknown" title
                 ++ "\" data"
         ]
 
 
-viewResolverProgress : ResolverProgress a -> (RH.Input -> String) -> (RH.Input -> String) -> String
-viewResolverProgress resolverProgress inProgressFormatter completeFormatter =
+viewIngestionStage : ResolverProgress Ingestion -> Html a
+viewIngestionStage resolverProgress =
+    div []
+        [ div [] [ text <| "Ingestion Status: " ++ resolverStatus resolverProgress ]
+        , buildSlider resolverProgress
+        ]
+
+
+viewResolutionStage : ResolverProgress Resolution -> Html a
+viewResolutionStage resolverProgress =
+    div []
+        [ div [] [ text <| "Resolution Status: " ++ resolverStatus resolverProgress ]
+        , buildSlider resolverProgress
+        ]
+
+
+resolverStatus : ResolverProgress a -> String
+resolverStatus resolverProgress =
     case resolverProgress of
         Pending ->
             "Pending"
 
         InProgress input ->
-            "In Progress " ++ (inProgressFormatter input)
+            "In Progress " ++ RH.etaString input
 
         Complete input ->
-            "Done " ++ (completeFormatter input)
-
-
-viewIngestionStage : Resolver -> ResolverProgress Ingestion -> Html a
-viewIngestionStage ({ stopTrigger } as resolver) resolverProgress =
-    let
-        ingestionStatus =
-            resolverStatus resolver resolverProgress
-    in
-        div []
-            [ div [] [ text <| "Ingestion Status: " ++ ingestionStatus ]
-            , buildSlider resolverProgress
-            ]
-
-
-viewResolutionStage : Resolver -> ResolverProgress Resolution -> Html a
-viewResolutionStage ({ stopTrigger } as resolver) resolverProgress =
-    let
-        resolutionStatus =
-            resolverStatus resolver resolverProgress
-    in
-        div []
-            [ div [] [ text <| "Resolution Status: " ++ resolutionStatus ]
-            , buildSlider resolverProgress
-            ]
-
-
-resolverStatus : Resolver -> ResolverProgress a -> String
-resolverStatus { stopTrigger } resolverProgress =
-    viewResolverProgress resolverProgress RH.etaString (RH.summaryString stopTrigger)
+            "Done " ++ RH.summaryString input
 
 
 viewDownload : Resolver -> Terms -> Html Msg

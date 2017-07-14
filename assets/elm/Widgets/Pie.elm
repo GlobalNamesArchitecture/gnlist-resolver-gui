@@ -37,11 +37,6 @@ type alias ArcOutput =
     }
 
 
-quarter : Float
-quarter =
-    pi / 2
-
-
 half : Float
 half =
     pi
@@ -55,16 +50,6 @@ round =
 radius : Float
 radius =
     0.5
-
-
-donut : Bool
-donut =
-    False
-
-
-diameter : Float
-diameter =
-    100
 
 
 getPointX : Float -> Float
@@ -112,7 +97,7 @@ getArc { dataset, datum, index, total } =
 
 
 arcToPath : ArcOutput -> String
-arcToPath { id, x1, y1, x2, y2, largeArcFlag, color } =
+arcToPath { x1, y1, x2, y2, largeArcFlag } =
     "M0,0 L"
         ++ toString x1
         ++ ","
@@ -135,13 +120,13 @@ getArcs dataset =
                     { dataset = dataset
                     , datum = datum
                     , index = index
-                    , total = (getTotalOfPieData dataset)
+                    , total = getTotalOfPieData dataset
                     }
                         |> getArc
                         |> arcToPath
                         |> Svg.Attributes.d
             in
-                Svg.path ([ Svg.Attributes.fill datum.color, dAttribute ]) []
+                Svg.path [ Svg.Attributes.fill datum.color, dAttribute ] []
         )
         dataset
 
@@ -206,5 +191,5 @@ legendDiv datum =
                 , ( "padding-left", "1em" )
                 ]
             ]
-            [ Html.text <| datum.legend ++ " " ++ (toString (floor datum.value)) ]
+            [ Html.text <| datum.legend ++ " " ++ toString (floor datum.value) ]
         ]

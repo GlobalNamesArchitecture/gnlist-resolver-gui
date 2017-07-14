@@ -3,9 +3,9 @@ module View exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import Markdown
 import Models exposing (Model)
 import Messages exposing (Msg(..))
-import Markdown exposing (toHtml)
 import Routing as R
 import Errors exposing (Errors, Error)
 import FileUpload.View as FUV
@@ -20,19 +20,9 @@ view : Model -> Html Msg
 view model =
     div []
         [ BC.view model
-        , viewErr model
+        , viewErrors model
         , findRoute model
         ]
-
-
-viewErr : Model -> Html Msg
-viewErr model =
-    case (errors model) of
-        Nothing ->
-            div [] []
-
-        Just _ ->
-            viewErrors model
 
 
 findRoute : Model -> Html Msg
@@ -47,8 +37,8 @@ findRoute model =
         R.Target token ->
             dataSourceView model token
 
-        R.Resolver token ->
-            resolverView model token
+        R.Resolver _ ->
+            resolverView model
 
         R.NotFoundRoute ->
             text "404 Not found"
@@ -71,8 +61,8 @@ dataSourceView model token =
         (DSV.view model.target token)
 
 
-resolverView : Model -> String -> Html Msg
-resolverView model token =
+resolverView : Model -> Html Msg
+resolverView model =
     Html.map ResolverMsg <|
         RV.view model.resolver
             (DSH.currentTarget model.target)
@@ -82,14 +72,14 @@ resolverView model token =
 errors : Model -> Errors
 errors model =
     let
-        errors =
+        errors_ =
             List.filter (\l -> l /= Nothing)
                 [ model.upload.errors, model.resolver.errors ]
     in
-        if List.isEmpty errors then
+        if List.isEmpty errors_ then
             Nothing
         else
-            errors
+            errors_
                 |> List.map (\l -> Maybe.withDefault [] l)
                 |> List.concatMap identity
                 |> Just
@@ -97,14 +87,14 @@ errors model =
 
 viewErrors : Model -> Html Msg
 viewErrors model =
-    case (errors model) of
+    case errors model of
         Nothing ->
             div [] [ text "No errors" ]
 
         Just es ->
             let
                 errorList =
-                    (List.map viewError es) ++ [ errorButton ]
+                    List.map viewError es ++ [ errorButton ]
             in
                 div [ class "errors" ] errorList
 

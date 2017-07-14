@@ -4,11 +4,11 @@ module Resolver.View.Slider
         , viewGraph
         )
 
-import Html exposing (Html, div, text)
+import Html exposing (Html, text)
 import Widgets.Slider as Slider
 import Widgets.Pie as Pie
-import Resolver.Models exposing (Resolution, Ingestion, ProgressMetadata(..), Matches, Stats(..), FailureCount(..), TotalRecordCount(..), ProcessedRecordCount(..), Resolver, totalRecordCount, metadataFromStats)
-import Resolver.Helper as RH exposing (ResolverProgress(..))
+import Resolver.Models exposing (Resolution, Ingestion, ProgressMetadata(..), Matches, Stats(..), FailureCount(..), TotalRecordCount(..), ProcessedRecordCount(..), Resolver, metadataFromStats)
+import Resolver.Helper exposing (ResolverProgress(..))
 
 
 type HexColor

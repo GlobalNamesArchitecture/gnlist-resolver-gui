@@ -45,7 +45,7 @@ prepareDataSources ds dss =
 
 appendDataSource : DataSource -> DataSource
 appendDataSource ds =
-    case (Dict.get ds.id abbreviation) of
+    case Dict.get ds.id abbreviation of
         Nothing ->
             ds
 

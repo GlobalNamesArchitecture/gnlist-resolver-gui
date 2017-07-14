@@ -1,7 +1,7 @@
 module Widgets.BreadCrumbs exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (href, class)
+import Html.Attributes exposing (class)
 import Routing exposing (Route(..))
 import Models exposing (Model)
 
@@ -44,7 +44,7 @@ row : Model -> ( Int, String ) -> Html msg
 row model ( pos, txt ) =
     let
         cls =
-            if (step model) < pos then
+            if step model < pos then
                 "pending"
             else
                 "done"

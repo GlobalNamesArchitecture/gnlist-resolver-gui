@@ -10,25 +10,32 @@ module Resolver.Helper
         , summaryString
         )
 
-import Maybe exposing (withDefault, andThen)
 import Resolver.Models exposing (Resolver, Resolution, Ingestion, Stats(..), ProgressMetadata(..), TotalRecordCount(..), ProcessedRecordCount(..))
 import TimeDuration.Model exposing (..)
 
 
 type alias Input =
-    { total : TotalRecordCount, processed : ProcessedRecordCount, timeSpan : Seconds, velocity : List Velocity }
+    { total : TotalRecordCount
+    , processed : ProcessedRecordCount
+    , timeSpan : Seconds
+    , velocity : List Velocity
+    }
 
 
 type alias Velocity =
-    { recordsNum : ProcessedRecordCount, timeSpan : Seconds }
+    { recordsNum : ProcessedRecordCount
+    , timeSpan : Seconds
+    }
 
 
 type alias Estimate =
-    { namesPerSec : Float, eta : TimeDuration }
+    { namesPerSec : Float
+    , eta : TimeDuration
+    }
 
 
 estimate : Input -> Estimate
-estimate ({ total, velocity, processed } as input) =
+estimate { total, velocity, processed } =
     let
         namesPerSec =
             normalizeVelocity velocity
@@ -41,7 +48,7 @@ estimate ({ total, velocity, processed } as input) =
 
         eta =
             timeToSeconds <|
-                (toFloat (total_ - processed_))
+                toFloat (total_ - processed_)
                     / namesPerSec
     in
         Estimate namesPerSec (secondsToTimeDuration eta)
@@ -80,27 +87,18 @@ waitTimeToString (TimeDuration h m s) =
     String.join ", " [ hoursToString h, minutesToString m, secondsToString s ]
 
 
-summaryString : Bool -> Input -> String
-summaryString stopped { timeSpan, total, processed } =
+summaryString : Input -> String
+summaryString { timeSpan, processed } =
     let
         hms =
             secondsToTimeDuration timeSpan
 
-        (TotalRecordCount total_) =
-            total
-
         (ProcessedRecordCount processed_) =
             processed
-
-        processedCount =
-            if stopped then
-                processed_
-            else
-                total_
     in
         "("
             ++ "Processed "
-            ++ toString processedCount
+            ++ toString processed_
             ++ " names in "
             ++ waitTimeToString hms
             ++ ")"
@@ -147,11 +145,6 @@ resolutionInput (ProgressMetadata _ _ totalRecords lastBatchesTime) resolution r
             List.map (Velocity expectedProcessCountPerSecond) lastBatchesTime
     in
         Input totalRecords processed timeSpan vel
-
-
-resSpan : Float -> List Float -> Maybe Float
-resSpan resolutionStop lastBatchesTime =
-    List.maximum <| resolutionStop :: lastBatchesTime
 
 
 occurrencesPerSecond : ProcessedRecordCount -> Seconds -> Float

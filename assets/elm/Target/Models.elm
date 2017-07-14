@@ -15,7 +15,10 @@ type alias DataSources =
 
 
 type alias DataSource =
-    { id : Int, title : Maybe String, desc : Maybe String }
+    { id : Int
+    , title : Maybe String
+    , desc : Maybe String
+    }
 
 
 initTarget : List Int -> Target

@@ -1,6 +1,5 @@
 module Models exposing (Model, Flags, initModel, currentToken)
 
-import Maybe exposing (withDefault)
 import Routing exposing (Route(..))
 import FileUpload.Models exposing (Upload, initUpload)
 import Terms.Models exposing (Terms, initTerms)

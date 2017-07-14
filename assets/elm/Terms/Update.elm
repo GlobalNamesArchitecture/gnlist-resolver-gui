@@ -6,7 +6,7 @@ import Http
 import Helper as H
 import Terms.Messages exposing (Msg(..))
 import Terms.Models exposing (Terms, Term, Header)
-import Terms.Decoder exposing (workflow, normalize, matchTerm)
+import Terms.Decoder exposing (workflow, normalize)
 import Terms.Encoder as TE
 
 
@@ -32,7 +32,7 @@ update msg terms =
         GetTerms (Ok newTerms) ->
             ( newTerms, Cmd.none )
 
-        GetTerms (Err err) ->
+        GetTerms (Err _) ->
             ( terms, Cmd.none )
 
         SaveTerms (Ok _) ->
@@ -55,11 +55,15 @@ determineWorkflow : Terms -> ( List Term, List Header )
 determineWorkflow terms =
     let
         normalizedHeaderTermValues =
-            List.map (\h -> normalize <|
-              withDefault "" h.term) terms.headers
+            List.map
+                (\h ->
+                    normalize <|
+                        withDefault "" h.term
+                )
+                terms.headers
 
-
-        updatedTerms = workflow normalizedHeaderTermValues
+        updatedTerms =
+            workflow normalizedHeaderTermValues
 
         updatedHeaders =
             List.map (changeHeadersTerms updatedTerms) terms.headers
@@ -77,15 +81,6 @@ changeHeadersTerms terms header =
             header
         else
             Header header.id header.value Nothing
-
-tryAddTerm : List Term -> Header -> Header
-tryAddTerm terms header =
-  let
-      term = matchTerm header.value terms
-  in
-      case term of
-        Nothing -> header
-        Just _ -> Header header.id header.value term
 
 
 updateHeaders : List Header -> Int -> String -> List Header

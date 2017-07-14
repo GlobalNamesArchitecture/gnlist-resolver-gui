@@ -1,6 +1,5 @@
 module Update exposing (update)
 
-import Maybe exposing (withDefault)
 import Messages exposing (Msg(..))
 import Models exposing (Model, currentToken)
 import Navigation exposing (Location)
@@ -24,17 +23,17 @@ update msg model =
         OnLocationChange location ->
             updateRoute location model
 
-        FileUploadMsg msg ->
-            updateUpload msg model
+        FileUploadMsg msg_ ->
+            updateUpload msg_ model
 
-        TermsMsg msg ->
-            updateTerms msg model
+        TermsMsg msg_ ->
+            updateTerms msg_ model
 
-        TargetMsg msg ->
-            updateTarget msg model
+        TargetMsg msg_ ->
+            updateTarget msg_ model
 
-        ResolverMsg msg ->
-            updateResolver msg model
+        ResolverMsg msg_ ->
+            updateResolver msg_ model
 
         EmptyErrors ->
             emptyErrors model

@@ -28,7 +28,7 @@ termsDecoder =
 -}
 workflow : List String -> List Term
 workflow normalizedHeaders =
-    if (List.any (\h -> h == "scientificname") normalizedHeaders) then
+    if List.any ((==) "scientificname") normalizedHeaders then
         sientificNameTerms
     else
         combinedTerms
@@ -91,7 +91,7 @@ matchTerm header workflowTerms =
     let
         rank =
             List.filter
-                (\r -> (normalize r) == (normalize header) && r /= "")
+                (\r -> normalize r == normalize header && r /= "")
             <|
                 List.map .value workflowTerms
     in

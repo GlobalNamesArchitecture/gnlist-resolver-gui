@@ -3,7 +3,7 @@ module Resolver.Update exposing (subscriptions, update)
 import Time exposing (Time, millisecond)
 import Resolver.Models exposing (..)
 import Resolver.Messages exposing (Msg(..))
-import Resolver.Api exposing (queryResolutionProgress, startResolution, sendStopResolution)
+import Resolver.Api exposing (queryResolutionProgress, sendStopResolution)
 
 
 subscriptions : Resolver -> Sub Msg
@@ -36,7 +36,7 @@ update msg resolver token =
             , Cmd.none
             )
 
-        ResolutionProgress (Err e) ->
+        ResolutionProgress (Err _) ->
             ( resolver, Cmd.none )
 
         SendStopResolution ->
