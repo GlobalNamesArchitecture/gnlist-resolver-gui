@@ -1,2 +1,18 @@
+# Ignore
 public/crossmaps/*
 uploads/*
+.yardoc
+_yardoc
+doc
+rdoc
+public/assets
+public/js/*
+elm-stuff
+node_modules
+npm-debug.log
+yarn-error.log
+v8-compile-cache-*
+*.*.js
+
+# Exclude from Ignore
+!webpack.config.js
