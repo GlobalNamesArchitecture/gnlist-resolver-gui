@@ -3,6 +3,7 @@
 /public/crossmaps/*
 .byebug_history
 .vim.custom
+.nvimlog
 
 ## General
 *.gem
