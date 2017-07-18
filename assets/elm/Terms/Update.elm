@@ -19,7 +19,7 @@ update msg terms =
                     updateHeaders terms.headers id term
 
                 termsList =
-                    List.map (\h -> withDefault h.value h.term) headers
+                    List.map (\h -> withDefault "" h.term) headers
             in
                 ( { terms | headers = headers }, saveTerms token termsList )
 
