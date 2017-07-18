@@ -1,0 +1,26 @@
+.pie-chart {
+  display: flex;
+  flex-direction: row;
+}
+
+.pie-chart__pie, .pie-chart__legend {
+  align-self: center;
+}
+
+.pie-chart__legend {
+  padding-left: 2em;
+}
+
+.legend-item__color-chip {
+  display: inline-block;
+  height: 15px;
+  vertical-align: middle;
+  width: 15px;
+}
+
+.legend-item__text {
+  display: inline-block;
+  padding-left: 1em;
+  vertical-align: middle;
+}
+

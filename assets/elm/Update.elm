@@ -1,5 +1,6 @@
 module Update exposing (update)
 
+import Material
 import Messages exposing (Msg(..))
 import Models exposing (Model, currentToken)
 import Navigation exposing (Location)
@@ -20,6 +21,9 @@ import Resolver.Api as RA
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Mdl msg_ ->
+            Material.update Mdl msg_ model
+
         OnLocationChange location ->
             updateRoute location model
 

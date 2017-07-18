@@ -2,7 +2,7 @@ module I18n exposing (Translation(..), t)
 
 import Filesize
 import TimeDuration.Model exposing (..)
-import FileUpload.Models exposing (Bytes(..))
+import FileUpload.Models exposing (Bytes(..), FileName(..))
 import Target.Models exposing (DataSource)
 import Resolver.Helper exposing (ResolverProgress(..), Input)
 import Resolver.Models exposing (ProcessedRecordCount(..), MatchType(..))
@@ -10,9 +10,12 @@ import Resolver.Models exposing (ProcessedRecordCount(..), MatchType(..))
 
 type Translation a
     = UploadFileSize Bytes
+    | UploadFileName FileName
+    | UploadSelection
     | UploadStarted
     | UploadFailed
     | UploadSuccessful
+    | UploadContinue
     | UploadInProgress Int
     | UploadComplete
     | JavaScriptFileUploadUnsupported
@@ -44,6 +47,7 @@ type Translation a
     | Version
     | ApplicationName
     | HomeLinkText
+    | UnknownTranslation
 
 
 t : Translation a -> String
@@ -51,6 +55,12 @@ t translation =
     case translation of
         UploadFileSize size ->
             "File size: " ++ formattedFileSize size
+
+        UploadFileName (FileName fileName) ->
+            fileName
+
+        UploadSelection ->
+            "Please select a CSV file to upload."
 
         UploadStarted ->
             "Upload started."
@@ -63,6 +73,9 @@ t translation =
 
         UploadSuccessful ->
             "Upload successful."
+
+        UploadContinue ->
+            "Continue"
 
         UploadInProgress percentageComplete ->
             "Progress: " ++ toString percentageComplete ++ "%"
@@ -163,6 +176,9 @@ t translation =
 
         HomeLinkText ->
             "Home"
+
+        UnknownTranslation ->
+            ""
 
 
 formattedFileSize : Bytes -> String

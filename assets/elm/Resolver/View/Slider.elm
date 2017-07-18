@@ -6,7 +6,7 @@ module Resolver.View.Slider
 
 import Html exposing (Html, text)
 import I18n exposing (Translation(..))
-import Widgets.Slider as Slider
+import Material.Progress as Loading
 import Widgets.Pie as Pie
 import Resolver.Models exposing (..)
 import Resolver.Helper exposing (ResolverProgress(..))
@@ -22,28 +22,27 @@ type PieChartLegend
 
 buildSlider : ResolverProgress a -> Html b
 buildSlider =
-    Slider.slider << datumFromProgress
+    uncurry Loading.buffered << floatFromProgress
 
 
-datumFromProgress : ResolverProgress a -> Slider.Datum
-datumFromProgress progress =
-    uncurry Slider.Datum <|
-        case progress of
-            Pending ->
-                ( 0, 1 )
+floatFromProgress : ResolverProgress a -> ( Float, Float )
+floatFromProgress progress =
+    case progress of
+        Pending ->
+            ( 0, 100 )
 
-            InProgress { total, processed } ->
-                let
-                    (ProcessedRecordCount processed_) =
-                        processed
+        InProgress { total, processed } ->
+            let
+                (ProcessedRecordCount processed_) =
+                    processed
 
-                    (TotalRecordCount total_) =
-                        total
-                in
-                    ( toFloat processed_, toFloat total_ )
+                (TotalRecordCount total_) =
+                    total
+            in
+                ( 100 * toFloat processed_ / toFloat total_, 100 )
 
-            Complete _ ->
-                ( 1, 1 )
+        Complete _ ->
+            ( 100, 100 )
 
 
 renderNothing : Html a

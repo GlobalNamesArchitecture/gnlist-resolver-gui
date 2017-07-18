@@ -1,5 +1,6 @@
 module Models exposing (Model, Flags, initModel, currentToken)
 
+import Material
 import Routing exposing (Route(..))
 import FileUpload.Models exposing (Upload, initUpload)
 import Terms.Models exposing (Terms, initTerms)
@@ -19,6 +20,7 @@ type alias Model =
     , resolver : Resolver
     , errors : Errors
     , softwareVersion : String
+    , mdl : Material.Model
     }
 
 
@@ -42,6 +44,7 @@ initModel flags route =
         initResolver
         Nothing
         flags.version
+        Material.model
 
 
 currentToken : Model -> Maybe String

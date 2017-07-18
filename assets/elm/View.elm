@@ -1,115 +1,70 @@
 module View exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (class)
-import Html.Events exposing (onClick)
-import View.Layout exposing (layout)
-import Markdown
 import Models exposing (Model)
 import Messages exposing (Msg(..))
-import Routing as R
 import I18n exposing (Translation(..))
-import Errors exposing (Errors, Error)
-import FileUpload.View as FUV
-import Terms.View as TV
-import Target.View as DSV
-import Target.Helper as DSH
-import Resolver.View as RV
-import Widgets.BreadCrumbs as BC
+import Routing exposing (Route(..))
+import View.Layout as Layout
+import View.Error as Error
+import FileUpload.View as FileUpload
+import Terms.View as Terms
+import Target.View as Target
+import Target.Helper as Target
+import Resolver.View as Resolver
+import Widgets.BreadCrumbs as Breadcrumbs
 
 
 view : Model -> Html Msg
 view model =
-    layout model <|
-        div []
-            [ BC.view model
-            , viewErrors model
+    Layout.layout model
+        [ div []
+            [ Breadcrumbs.view model
+            , Error.view model
             , findRoute model
             ]
+        ]
 
 
 findRoute : Model -> Html Msg
 findRoute model =
     case model.route of
-        R.FileUpload ->
+        FileUpload ->
             fileUploadView model
 
-        R.Terms token ->
+        Terms token ->
             termsView model token
 
-        R.Target token ->
+        Target token ->
             dataSourceView model token
 
-        R.Resolver _ ->
+        Resolver _ ->
             resolverView model
 
-        R.NotFoundRoute ->
+        NotFoundRoute ->
             text <| I18n.t RouteNotFound
 
 
 fileUploadView : Model -> Html Msg
 fileUploadView model =
-    Html.map FileUploadMsg (FUV.view model.upload)
+    Html.map FileUploadMsg <| FileUpload.view model.upload
 
 
-termsView : Model -> R.Token -> Html Msg
+termsView : Model -> Routing.Token -> Html Msg
 termsView model token =
-    Html.map TermsMsg
-        (TV.view model.target.all model.terms token)
+    Html.map TermsMsg <|
+        Terms.view model.target.all model.terms token
 
 
-dataSourceView : Model -> String -> Html Msg
+dataSourceView : Model -> Routing.Token -> Html Msg
 dataSourceView model token =
-    Html.map TargetMsg
-        (DSV.view model.target token)
+    Html.map TargetMsg <|
+        Target.view model.target token
 
 
 resolverView : Model -> Html Msg
 resolverView model =
     Html.map ResolverMsg <|
-        RV.view model.resolver
-            (DSH.currentTarget model.target)
+        Resolver.view model.resolver
+            (Target.currentTarget model.target)
             model.terms
-
-
-errors : Model -> Errors
-errors model =
-    let
-        errors_ =
-            List.filter (\l -> l /= Nothing)
-                [ model.upload.errors, model.resolver.errors ]
-    in
-        if List.isEmpty errors_ then
-            Nothing
-        else
-            errors_
-                |> List.map (\l -> Maybe.withDefault [] l)
-                |> List.concatMap identity
-                |> Just
-
-
-viewErrors : Model -> Html Msg
-viewErrors model =
-    case errors model of
-        Nothing ->
-            div [] [ text <| I18n.t NoErrors ]
-
-        Just es ->
-            let
-                errorList =
-                    List.map viewError es ++ [ errorButton ]
-            in
-                div [ class "errors" ] errorList
-
-
-viewError : Error -> Html Msg
-viewError er =
-    div [ class "error" ]
-        [ h3 [] [ text er.title ]
-        , Markdown.toHtml [] er.body
-        ]
-
-
-errorButton : Html Msg
-errorButton =
-    div [] [ button [ onClick EmptyErrors ] [ text <| I18n.t DismissErrors ] ]

@@ -1,10 +1,13 @@
 module Terms.View exposing (view)
 
 import Html exposing (..)
+import Material.Table as Table
+import Material.Options as Options
 import Html.Events exposing (onClick, on, targetValue)
 import Html.Attributes exposing (class, value, id, list)
 import Json.Decode as J
 import Terms.Models exposing (Terms, Term, Header, Row, allTermValues)
+import View.Layout exposing (contentWrapper)
 import I18n exposing (Translation(..))
 import Terms.Messages exposing (Msg(..))
 import Target.Models exposing (DataSources)
@@ -12,12 +15,35 @@ import Target.Models exposing (DataSources)
 
 view : DataSources -> Terms -> String -> Html Msg
 view ds terms token =
-    div []
-        [ button [ onClick (nextMsg ds token) ] [ text <| I18n.t Continue ]
-        , div [ (class "terms_table_container") ]
-            [ table [ class "terms_table" ] <|
-                viewHeaders terms.headers
-                    :: (viewSelectors token terms :: viewRows terms.rows)
+    contentWrapper BreadcrumbMapHeaders
+        [ div []
+            [ button [ onClick (nextMsg ds token) ] [ text <| I18n.t Continue ]
+            , materialTable token terms
+            ]
+        ]
+
+
+viewRows : List Row -> List (Html a)
+viewRows =
+    List.map viewRow
+
+
+viewRow : Row -> Html a
+viewRow row =
+    Table.tr [] (List.map viewRowEntry row)
+
+
+viewRowEntry : Maybe String -> Html a
+viewRowEntry re =
+    Table.td [] [ text <| Maybe.withDefault "" re ]
+
+
+materialTable : String -> Terms -> Html Msg
+materialTable token terms =
+    div [ class "terms__table" ]
+        [ Table.table []
+            [ Table.thead [] [ viewHeaders terms.headers, viewSelectors token terms ]
+            , Table.tbody [] <| viewRows terms.rows
             ]
         ]
 
@@ -32,12 +58,12 @@ nextMsg ds token =
 
 viewSelectors : String -> Terms -> Html Msg
 viewSelectors token terms =
-    tr [] (List.map (viewSelector token terms) terms.headers)
+    Table.tr [] (List.map (viewSelector token terms) terms.headers)
 
 
 viewSelector : String -> Terms -> Header -> Html Msg
 viewSelector token terms header =
-    td [ class "terms_selector" ]
+    Table.th []
         [ text <| I18n.t TermMatchWithHeader
         , br [] []
         , input
@@ -123,12 +149,12 @@ dropDownEntry field =
 
 viewHeaders : List Header -> Html Msg
 viewHeaders headers =
-    tr [] (List.map viewHeaderEntry headers)
+    Table.tr [] (List.map viewHeaderEntry headers)
 
 
 viewHeaderEntry : Header -> Html Msg
 viewHeaderEntry header =
-    th [ headerClass header ]
+    Table.th [ headerClass header ]
         [ text <|
             case header.term of
                 Nothing ->
@@ -139,35 +165,11 @@ viewHeaderEntry header =
         ]
 
 
-headerClass : Header -> Attribute msg
+headerClass : Header -> Options.Property c m
 headerClass header =
     case header.term of
         Nothing ->
-            class "no_dwca"
+            Options.cs "no_dwca"
 
         _ ->
-            class "dwca"
-
-
-viewRows : List Row -> List (Html Msg)
-viewRows rows =
-    List.map viewRow rows
-
-
-viewRow : Row -> Html Msg
-viewRow row =
-    tr [] (List.map viewRowEntry row)
-
-
-viewRowEntry : Maybe String -> Html Msg
-viewRowEntry re =
-    let
-        val =
-            case re of
-                Just entry ->
-                    entry
-
-                Nothing ->
-                    ""
-    in
-        td [] [ text val ]
+            Options.cs "dwca"

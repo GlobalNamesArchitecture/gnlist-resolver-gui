@@ -1,3 +1,5 @@
+require("./css/app.scss");
+
 const Elm = require("../elm/Main");
 import configureFileUpload from "./upload";
 

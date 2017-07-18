@@ -1,11 +1,12 @@
 module Resolver.View exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (style, alt, href)
+import Html.Attributes exposing (alt, href)
 import Html.Events exposing (onClick)
 import I18n exposing (Translation(..))
 import Terms.Models exposing (Terms)
 import Target.Models exposing (DataSource)
+import View.Layout exposing (contentWrapper)
 import Resolver.Models
     exposing
         ( Resolver
@@ -15,25 +16,17 @@ import Resolver.Models
         , Matches
         )
 import Resolver.Messages exposing (Msg(..))
-import Resolver.Helper as RH exposing (ResolverProgress(..), ingestionResolverProgress, resolutionResolverProgress)
+import Resolver.Helper exposing (ResolverProgress(..), ingestionResolverProgress, resolutionResolverProgress)
 import Resolver.View.Slider exposing (..)
 
 
 view : Resolver -> DataSource -> Terms -> Html Msg
 view resolver ds terms =
-    div []
-        [ viewTitle ds
-        , viewIngestionStage <| ingestionResolverProgress resolver
+    contentWrapper (CrossmappingHeader ds)
+        [ viewIngestionStage <| ingestionResolverProgress resolver
         , viewResolutionStage <| resolutionResolverProgress resolver
         , viewGraph resolver
         , viewDownload resolver terms
-        ]
-
-
-viewTitle : DataSource -> Html a
-viewTitle ds =
-    h3 []
-        [ text <| I18n.t (CrossmappingHeader ds)
         ]
 
 
@@ -82,26 +75,17 @@ downloadOutputLinks terms { stopTrigger } =
             String.dropRight 3 terms.output ++ "xlsx"
     in
         div
-            [ style
-                [ ( "clear", "left" )
-                , ( "padding", "1em" )
-                , ( "background-color", "#afa" )
-                ]
-            ]
+            []
             [ text msg
             , a
                 [ href csvOutput
                 , alt <| I18n.t DownloadText ++ " " ++ I18n.t CSVDownloadLink
-                , style
-                    [ ( "color", "#22c" ) ]
                 ]
                 [ text <| I18n.t CSVDownloadLink ]
             , text " "
             , a
                 [ href excelOutput
                 , alt <| I18n.t DownloadText ++ " " ++ I18n.t XLSXDownloadLink
-                , style
-                    [ ( "color", "#22c" ) ]
                 ]
                 [ text <| I18n.t XLSXDownloadLink ]
             ]
@@ -110,11 +94,7 @@ downloadOutputLinks terms { stopTrigger } =
 cancelResolution : Html Msg
 cancelResolution =
     div
-        [ style
-            [ ( "clear", "left" )
-            , ( "padding", "2em" )
-            ]
-        ]
+        []
         [ button
             [ onClick SendStopResolution ]
             [ text <| I18n.t CancelResolution ]

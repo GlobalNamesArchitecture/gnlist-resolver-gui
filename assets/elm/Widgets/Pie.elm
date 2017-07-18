@@ -12,8 +12,8 @@ module Widgets.Pie exposing (pie, PieData, PieDatum)
 
 import List
 import Svg
-import Html exposing (..)
-import Html.Attributes as HA
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class, style)
 import Svg.Attributes
 
 
@@ -145,13 +145,8 @@ pie diameter dataset =
             toString diameter
     in
         div
-            [ HA.style
-                [ ( "margin-left", "5em" )
-                , ( "align", "center" )
-                , ( "vertical-align", "middle" )
-                ]
-            ]
-            [ div [ HA.style [ ( "float", "left" ), ( "margin", "1em" ) ] ]
+            [ class "pie-chart" ]
+            [ div [ class "pie-chart__pie" ]
                 [ Svg.svg
                     [ Svg.Attributes.viewBox "-0.5 -0.5 1 1"
                     , Svg.Attributes.width diameterString
@@ -161,38 +156,27 @@ pie diameter dataset =
                     ]
                     (getArcs dataset)
                 ]
-            , div
-                [ HA.style [ ( "text-align", "left" ), ( "padding-top", "2em" ) ]
-                ]
-                (pieLegend dataset)
+            , div [ class "pie-chart__legend" ] (pieLegend dataset)
             ]
 
 
 pieLegend : PieData -> List (Html msg)
 pieLegend dataset =
-    List.map legendDiv dataset
+    List.map legendItem dataset
 
 
-legendDiv : PieDatum -> Html msg
-legendDiv datum =
+legendItem : PieDatum -> Html msg
+legendItem datum =
     div
-        [ HA.style [ ( "vertical-align", "middle" ) ] ]
+        [ class "legend-item" ]
         [ div
-            [ HA.style
+            [ class "legend-item__color-chip"
+            , style
                 [ ( "background-color", datum.color )
-                , ( "width", "15px" )
-                , ( "height", "15px" )
-                , ( "display", "inline-block" )
-                , ( "vertical-align", "middle" )
                 ]
             ]
             []
         , div
-            [ HA.style
-                [ ( "display", "inline-block" )
-                , ( "vertical-align", "middle" )
-                , ( "padding-left", "1em" )
-                ]
-            ]
-            [ Html.text <| datum.legend ++ " " ++ toString (floor datum.value) ]
+            [ class "legend-item__text" ]
+            [ text <| datum.legend ++ " " ++ toString (floor datum.value) ]
         ]

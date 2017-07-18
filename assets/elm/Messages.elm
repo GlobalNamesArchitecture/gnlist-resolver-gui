@@ -1,6 +1,7 @@
 module Messages exposing (Msg(..))
 
 import Navigation exposing (Location)
+import Material
 import FileUpload.Messages
 import Terms.Messages
 import Target.Messages
@@ -14,3 +15,4 @@ type Msg
     | TargetMsg Target.Messages.Msg
     | ResolverMsg Resolver.Messages.Msg
     | EmptyErrors
+    | Mdl (Material.Msg Msg)

@@ -1,0 +1,25 @@
+@import "variables";
+
+.mdl-layout {
+  height: auto;
+}
+
+.mdl-layout__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  margin: 0 80px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: $white;
+}
+
+.container__content {
+  flex: 1;
+  padding: 2em;
+}
+
+

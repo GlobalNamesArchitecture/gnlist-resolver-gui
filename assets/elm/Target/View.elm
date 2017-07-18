@@ -15,27 +15,30 @@ import Html.Events exposing (onClick, on, targetValue)
 import Json.Decode as J
 import Maybe exposing (withDefault)
 import I18n exposing (Translation(..))
+import View.Layout exposing (contentWrapper)
 import Target.Models exposing (Target, DataSources, DataSource)
 import Target.Messages exposing (Msg(..))
 
 
 view : Target -> String -> Html Msg
 view target token =
-    div []
+    contentWrapper BreadcrumbPickReferenceData
         [ div []
-            [ button [ onClick <| ToResolver token ] [ text <| I18n.t Continue ]
-            ]
-        , div []
-            [ input
-                [ type_ "text"
-                , class "target-search"
-                , autofocus True
-                , onInput FilterTarget
-                , placeholder <| I18n.t SearchPlaceholder
+            [ div []
+                [ button [ onClick <| ToResolver token ] [ text <| I18n.t Continue ]
                 ]
-                []
+            , div []
+                [ input
+                    [ type_ "text"
+                    , class "target-search"
+                    , autofocus True
+                    , onInput FilterTarget
+                    , placeholder <| I18n.t SearchPlaceholder
+                    ]
+                    []
+                ]
+            , selectTarget target token
             ]
-        , selectTarget target token
         ]
 
 
