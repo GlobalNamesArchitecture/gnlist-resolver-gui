@@ -2,7 +2,9 @@ module Widgets.Pie exposing (pie, PieData, PieDatum)
 
 {-| An SVG chart library.
 
+
 # Pie
+
 @docs pie
 @docs PieData
 
@@ -134,6 +136,7 @@ getArcs dataset =
 {-| Draws a pie chart of given diameter of the dataset.
 
     Pie.pie 300 [{color = "#0ff", value = 3}, {color = "purple", value = 27}]
+
 -}
 pie : Int -> PieData -> Html msg
 pie diameter dataset =

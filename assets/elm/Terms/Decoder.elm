@@ -24,7 +24,7 @@ termsDecoder =
 
 
 {-| Decide if to show full list of terms, or only ones that are related to the
-    `scientificName` workflow. List of headers has to be normalized.
+`scientificName` workflow. List of headers has to be normalized.
 -}
 workflow : List String -> List Term
 workflow normalizedHeaders =
@@ -35,7 +35,7 @@ workflow normalizedHeaders =
 
 
 {-| Normalize headers that are coming from user's data. Converts uri terms
-    into format recognizable by listresolver
+into format recognizable by listresolver
 -}
 normalize : String -> String
 normalize word =
