@@ -359,8 +359,8 @@ showMatchType matchType =
         GenusOnlyMatch _ ->
             "Genus-only match"
 
-        ResolverErrorsMatch _ ->
-            "Resolver Errors"
-
         NoMatchMatch _ ->
             "No match"
+
+        ResolverErrorsMatch _ ->
+            "Resolver Errors"

@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: gnlist
+  name: gnlist-future
   namespace: gn
   labels:
-    app: gnlist
+    app: gnlist-future
     tier: frontend
 spec:
   type: NodePort
@@ -13,22 +13,22 @@ spec:
     - port: 80
       targetPort: 9292
   selector:
-    app: gnlist
+    app: gnlist-future
     tier: frontend
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: gnlist
+  name: gnlist-future
   namespace: gn
 spec:
   replicas: 3
   template:
     metadata:
-      name: gnlist
+      name: gnlist-future
       namespace: gn
       labels:
-        app: gnlist
+        app: gnlist-future
         tier: frontend
     spec:
       volumes:
@@ -39,8 +39,8 @@ spec:
           persistentVolumeClaim:
             claimName: gnlist-uploads-pvc
       containers:
-        - name: gnlist
-          image: gnames/listresolver:2017-08-10-38805ee
+        - name: gnlist-future
+          image: gnames/listresolver:2017-09-07-393961c
           livenessProbe:
             httpGet:
               path: /
@@ -61,10 +61,15 @@ spec:
                   key: session.secret
             - name: RACKAPP_DB_HOST
               value: gnlist-db
+            - name: GN_RESOLVER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: gnlist-future
+                  key: graphql.url
             - name: RACKAPP_DB
               valueFrom:
                 configMapKeyRef:
-                  name: gnlist
+                  name: gnlist-future
                   key: db
             - name: RACKAPP_DB_USERNAME
               valueFrom:
@@ -79,17 +84,17 @@ spec:
             - name: RACKAPP_RESOLVER_URL_CLIENT
               valueFrom:
                 configMapKeyRef:
-                  name: gnlist
+                  name: gnlist-future
                   key: resolver.url
             - name: RACKAPP_RESOLVER_URL_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: gnlist
+                  name: gnlist-future
                   key: resolver.internal.url
             - name: RACKAPP_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: gnlist
+                  name: gnlist-future
                   key: server
             - name: RACKAPP_SESSION_SECRET
               valueFrom:
@@ -99,22 +104,22 @@ spec:
             - name: RACKAPP_PUMA_WORKERS
               valueFrom:
                 configMapKeyRef:
-                  name: gnlist
+                  name: gnlist-future
                   key: puma.workers
             - name: RACKAPP_ASYNC_WORKERS
               valueFrom:
                 configMapKeyRef:
-                  name: gnlist
+                  name: gnlist-future
                   key: async.workers
             - name: RACKAPP_DATA_SOURCES
               valueFrom:
                 configMapKeyRef:
-                  name: gnlist
+                  name: gnlist-future
                   key: data.sources
             - name: RACK_ENV
               valueFrom:
                 configMapKeyRef:
-                  name: gnlist
+                  name: gnlist-future
                   key: env
             - name: RACKAPP_SOFTWARE_VERSION
               valueFrom:

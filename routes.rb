@@ -39,8 +39,9 @@ module Gnlr
 
     get "/stats/:token" do
       content_type :json
-      cm = ListMatcher.find_by_token(params[:token])
-      cm.stats.to_json
+      list_matcher = ListMatcher.find_by_token(params[:token])
+      logger.warn(list_matcher.stats.to_json)
+      list_matcher.stats.to_json
     end
 
     if ENV["ASSET_HOST"]

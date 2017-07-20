@@ -13,7 +13,7 @@ module Gnlr
           resolve(token)
           make_excel_output(token)
           logger.info "Successful name-matching with #{token}"
-        rescue GnCrossmapError => e
+        rescue GnListResolverError => e
           logger.error e.message
         end
       end
@@ -24,7 +24,7 @@ module Gnlr
     def resolve(token)
       list_matcher, opts = params(token)
       @output = opts[:output]
-      GnCrossmap.run(opts) do |stats|
+      GnListResolver.run(opts) do |stats|
         stats = update_stats(stats)
         list_matcher.update(stats: stats.merge(excel_rows: 0))
         "STOP" if ListMatcher.find_by_token(token).stop_trigger
@@ -51,7 +51,7 @@ module Gnlr
                data_source_id: list_matcher.data_source_id,
                resolver_url: Gnlr.conf.internal_resolver_url +
                              "/name_resolvers.json",
-               with_classification: true, threads: 2,
+               with_classification: true, threads: 4,
                skip_original: false, alt_headers: alt_headers }
       [list_matcher, opts]
     end

@@ -33,7 +33,7 @@ statsDecoder =
 
 statusToStatsDecoder : String -> Decoder Stats
 statusToStatsDecoder status =
-    case status of
+    case (Debug.log "status" status) of
         "init" ->
             map PendingResolution progressMetadataDecoder
 
@@ -64,7 +64,7 @@ progressMetadataDecoder =
 
 failureCountDecoder : Decoder FailureCount
 failureCountDecoder =
-    map (FailureCount << round) (at [ "matches", "7" ] float)
+    map (FailureCount << round) (at [ "matches", "ErrorInMatch" ] float)
 
 
 totalRecordCountDecoder : Decoder TotalRecordCount
@@ -131,13 +131,15 @@ lastBatchesTimeDecoder =
 matches : Decoder Matches
 matches =
     map7 Matches
-        (at [ "matches", "0" ] <| map NoMatch float)
-        (at [ "matches", "1" ] <| map ExactString float)
-        (at [ "matches", "2" ] <| map ExactCanonical float)
-        (at [ "matches", "3" ] <| map Fuzzy float)
-        (at [ "matches", "4" ] <| map Partial float)
-        (at [ "matches", "5" ] <| map PartialFuzzy float)
-        (at [ "matches", "6" ] <| map GenusOnly float)
+        (at [ "matches", "EmptyMatch" ] <| map NoMatch float)
+        (at [ "matches", "ExactNameMatchByUUID" ] <| map ExactString float)
+        (at [ "matches", "ExactCanonicalNameMatchByUUID" ] <|
+            map ExactCanonical float
+        )
+        (at [ "matches", "FuzzyCanonicalMatch" ] <| map Fuzzy float)
+        (at [ "matches", "ExactPartialMatch" ] <| map Partial float)
+        (at [ "matches", "FuzzyPartialMatch" ] <| map PartialFuzzy float)
+        (at [ "matches", "ExactMatchPartialByGenus" ] <| map GenusOnly float)
 
 
 resolutionStopDecoder : Decoder Float
