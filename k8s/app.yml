@@ -37,7 +37,7 @@ spec:
             claimName: gnlist-uploads-pvc
       containers:
         - name: gnlist
-          image: gnames/listresolver:2017-07-20-07a97a5
+          image: gnames/listresolver:2017-07-21-4c74c44
           livenessProbe:
             httpGet:
               path: /
