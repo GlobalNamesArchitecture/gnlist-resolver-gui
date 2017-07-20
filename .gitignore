@@ -1,6 +1,6 @@
 ## App
 *.csv
-/public/crossmaps/*
+/public/downloads/*
 .byebug_history
 .vim.custom
 .nvimlog

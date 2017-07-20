@@ -1,5 +1,5 @@
 # Ignore
-public/crossmaps/*
+public/downloads/*
 uploads/*
 .yardoc
 _yardoc

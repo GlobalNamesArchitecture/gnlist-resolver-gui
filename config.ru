@@ -5,4 +5,4 @@ require "./app.rb"
 
 set :run, false
 
-run Gnc::App
+run Gnlr::App

@@ -9,7 +9,7 @@ getTerms : String -> Cmd Msg
 getTerms token =
     let
         url =
-            "/crossmaps/" ++ token
+            "/list_matchers/" ++ token
     in
         Http.send GetTerms
             (Http.get url termsDecoder)

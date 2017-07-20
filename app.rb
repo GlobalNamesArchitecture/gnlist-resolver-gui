@@ -22,30 +22,30 @@ require "sucker_punch"
 require "axlsx"
 require "tmpdir"
 
-require_relative "lib/gnc"
-require_relative "lib/gnc/errors"
-require_relative "lib/gnc/version"
-require_relative "lib/gnc/uploader"
-require_relative "lib/gnc/data_source"
-require_relative "lib/gnc/job_logger"
-require_relative "lib/gnc/file_inspector"
-require_relative "lib/gnc/csv_sampler"
-require_relative "lib/gnc/resolver"
-require_relative "lib/gnc/excel_builder"
+require_relative "lib/gnlr"
+require_relative "lib/gnlr/errors"
+require_relative "lib/gnlr/version"
+require_relative "lib/gnlr/uploader"
+require_relative "lib/gnlr/data_source"
+require_relative "lib/gnlr/job_logger"
+require_relative "lib/gnlr/file_inspector"
+require_relative "lib/gnlr/csv_sampler"
+require_relative "lib/gnlr/resolver"
+require_relative "lib/gnlr/excel_builder"
 
-Gnc.prepare_load_path
-Gnc.prepare_env
+Gnlr.prepare_load_path
+Gnlr.prepare_env
 
-log_file = File.join(__dir__, "log", "#{Gnc.env}.log")
-Gnc.logger = Logger.new(log_file, 10, 1_024_000)
-Gnc.logger.level = Logger::WARN
+log_file = File.join(__dir__, "log", "#{Gnlr.env}.log")
+Gnlr.logger = Logger.new(log_file, 10, 1_024_000)
+Gnlr.logger.level = Logger::WARN
 
-Gnc.db_connection
+Gnlr.db_connection
 
 require_relative "routes"
 require_relative "helpers"
 
-module Gnc
+module Gnlr
   # Sinatra app namespace
   class App < Sinatra::Application
     # Substitutes a class removed from ActifeRecord 5.x
@@ -74,7 +74,7 @@ module Gnc
       helpers Sinatra::RedirectWithFlash
 
       use Rack::MethodOverride
-      use Rack::Session::Cookie, secret: Gnc.conf.session_secret
+      use Rack::Session::Cookie, secret: Gnlr.conf.session_secret
       use Rack::Timeout, service_timeout: 9_000_000
       use ConnectionManagement
 

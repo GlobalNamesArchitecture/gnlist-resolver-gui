@@ -16,12 +16,12 @@ database:
 
   development:
     <<: *common
-    database: gnc_dev
+    database: <%= ENV["RACKAPP_DB"] %>_dev
 
   test:
     <<: *common
-    database: gnc_test
+    database: <%= ENV["RACKAPP_DB"] %>_test
 
   production:
     <<: *common
-    database: gnc
+    database: <%= ENV["RACKAPP_DB"] %>

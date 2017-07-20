@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# Migration to create crossmaps table
-class CreateCrossmaps < ActiveRecord::Migration[4.2]
+# Migration to create list_matchers table
+class CreateListMatchers < ActiveRecord::Migration[4.2]
   def change
-    create_table :crossmaps do |t|
+    create_table :list_matchers do |t|
       t.string :filename
       t.string :input
       t.string :output

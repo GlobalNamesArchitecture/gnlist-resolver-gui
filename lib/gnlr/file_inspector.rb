@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Gnc
+module Gnlr
   # Determines what kind of file was uploaded
   module FileInspector
     EMPTY_RESULT = ["", 0, ""].freeze

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Gnc
-  # Gnc::ExcelBuilder converts CSV into an Excel file
+module Gnlr
+  # Gnlr::ExcelBuilder converts CSV into an Excel file
   class ExcelBuilder
     def initialize(output_path)
       @file = File.split(output_path).last

@@ -107,7 +107,7 @@ saveTerms : String -> List String -> Cmd Msg
 saveTerms token terms =
     let
         url =
-            "/crossmaps"
+            "/list_matchers"
     in
         Http.send SaveTerms
             (H.put url <| TE.body token terms)

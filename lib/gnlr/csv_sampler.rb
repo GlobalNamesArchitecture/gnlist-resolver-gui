@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Gnc
+module Gnlr
   # Creates a sample of data from a csv file
   module CsvSampler
     class << self

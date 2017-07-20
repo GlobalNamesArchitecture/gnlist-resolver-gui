@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gnc::FileInspector do
+describe Gnlr::FileInspector do
   let(:files) { File.join(__dir__, "..", "files") }
   let(:file) { open(File.join(files, "taxonid_as_id.csv")) }
 

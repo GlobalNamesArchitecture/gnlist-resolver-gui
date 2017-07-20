@@ -13,6 +13,6 @@ end
 
 def name_list_file(token)
   file = File.join(__dir__, "..", "files", "wellformed-semicolon.csv")
-  dest = Crossmap.input(token)
+  dest = ListMatcher.input(token)
   FileUtils.cp(file, dest)
 end

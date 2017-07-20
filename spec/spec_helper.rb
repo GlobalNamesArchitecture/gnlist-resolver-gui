@@ -21,7 +21,7 @@ ENV["RACK_ENV"] = "test"
 require_relative "../app.rb"
 
 Capybara.javascript_driver = :webkit
-Capybara.app = Gnc::App
+Capybara.app = Gnlr::App
 
 RSpec.configure do |c|
   c.include Capybara::DSL

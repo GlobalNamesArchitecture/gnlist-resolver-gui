@@ -37,7 +37,7 @@ sendStopResolution : String -> Cmd Msg
 sendStopResolution token =
     let
         url =
-            "/crossmaps"
+            "/list_matchers"
     in
         Http.send StopResolution
             (H.put url <| RE.body token)

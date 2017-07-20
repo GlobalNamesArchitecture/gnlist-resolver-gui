@@ -23,16 +23,16 @@ type Translation a
     | BreadcrumbUploadFile
     | BreadcrumbMapHeaders
     | BreadcrumbPickReferenceData
-    | BreadcrumbCrossmapNames
+    | BreadcrumbListMatcherNames
     | TermMatchWithHeader
     | CloseButton
     | TermTranslationHeader String String
-    | CrossmappingHeader DataSource
+    | ListMatchingHeader DataSource
     | IngestionStatus
     | ResolutionStatus
     | ResolverStatus (ResolverProgress a)
-    | DownloadPartialCrossmapping
-    | DownloadCompletedCrossmapping
+    | DownloadPartialMatching
+    | DownloadCompletedMatching
     | CSVDownloadLink
     | XLSXDownloadLink
     | DownloadText
@@ -95,8 +95,8 @@ t translation =
         BreadcrumbPickReferenceData ->
             "Pick Reference Data"
 
-        BreadcrumbCrossmapNames ->
-            "Crossmap Names"
+        BreadcrumbListMatcherNames ->
+            "Match Names"
 
         TermMatchWithHeader ->
             "match with"
@@ -107,8 +107,8 @@ t translation =
         TermTranslationHeader from to ->
             from ++ " → " ++ to
 
-        CrossmappingHeader { title } ->
-            "Crossmapping your file against \""
+        ListMatchingHeader { title } ->
+            "Matching names from your file against \""
                 ++ Maybe.withDefault "Unknown" title
                 ++ "\" data"
 
@@ -129,11 +129,11 @@ t translation =
                 Complete input ->
                     "Done " ++ summaryString input
 
-        DownloadPartialCrossmapping ->
-            "Download partial crossmapping results: "
+        DownloadPartialMatching ->
+            "Download partial name-matching results: "
 
-        DownloadCompletedCrossmapping ->
-            "Download crossmapping results: "
+        DownloadCompletedMatching ->
+            "Download name-matching results: "
 
         CSVDownloadLink ->
             "CSV"

@@ -2,7 +2,7 @@
 
 require "rack/reverse_proxy"
 
-module Gnc
+module Gnlr
   # Sinatra App namespace
   class App < Sinatra::Application
     if ENV["ASSET_HOST"]
@@ -21,41 +21,39 @@ module Gnc
 
     post "/upload" do
       begin
-        uploader = Gnc::Uploader.new(params["file-upload"])
-        crossmap = uploader.save_list_file
-        crossmap.token
-      rescue GncFileTypeError
+        uploader = Gnlr::Uploader.new(params["file-upload"])
+        list_matcher = uploader.save_list_file
+        list_matcher.token
+      rescue Gnlr::FileTypeError
         "FAIL"
       end
     end
 
-    get "/crossmaps/:token" do
+    get "/list_matchers/:token" do
       content_type :json
-      crossmap = Crossmap.find_by_token(params[:token]).to_json
-      puts crossmap
-      crossmap
+      ListMatcher.find_by_token(params[:token]).to_json
     end
 
-    put "/crossmaps" do
+    put "/list_matchers" do
       params = JSON.parse(request.body.read, symbolize_names: true)
       logger.info params
-      crossmap = Crossmap.find_by_token(params[:token])
-      crossmap_params = params.select do |k, _|
+      list_matcher = ListMatcher.find_by_token(params[:token])
+      filtered_params = params.select do |k, _|
         %i[data_source_id alt_headers stop_trigger].include? k
       end
-      crossmap.update(crossmap_params)
-      crossmap.save ? "OK" : nil
+      list_matcher.update(filtered_params)
+      list_matcher.save ? "OK" : nil
     end
 
     get "/resolver/:token" do
       content_type :json
-      Gnc::Resolver.perform_async(params[:token])
+      Gnlr::Resolver.perform_async(params[:token])
       { status: "OK" }.to_json
     end
 
     get "/stats/:token" do
       content_type :json
-      cm = Crossmap.find_by_token(params[:token])
+      cm = ListMatcher.find_by_token(params[:token])
       cm.stats.to_json
     end
   end

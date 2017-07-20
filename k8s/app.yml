@@ -42,7 +42,7 @@ spec:
             httpGet:
               path: /
               port: 9292
-            initialDelaySeconds: 60
+            initialDelaySeconds: 90
             timeoutSeconds: 3
           readinessProbe:
             httpGet:
@@ -58,6 +58,11 @@ spec:
                   key: session.secret
             - name: RACKAPP_DB_HOST
               value: gnlist-db
+            - name: RACKAPP_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: gnlist
+                  key: db
             - name: RACKAPP_DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -93,7 +98,7 @@ spec:
                 configMapKeyRef:
                   name: gnlist
                   key: puma.workers
-            - name: RACKAPP_ASYC_WORKERS
+            - name: RACKAPP_ASYNC_WORKERS
               valueFrom:
                 configMapKeyRef:
                   name: gnlist
@@ -112,7 +117,7 @@ spec:
             - containerPort: 9292
               name: http
           volumeMounts:
-            - mountPath: /app/public/crossmaps
+            - mountPath: /app/public/downloads
               name: gnlist-results-vol
             - mountPath: /app/uploads
               name: gnlist-uploads-vol

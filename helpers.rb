@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Gnc
+module Gnlr
   # Sinatra App name space
   class App < Sinatra::Application
     helpers do

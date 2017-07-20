@@ -2,7 +2,7 @@
 
 # rubocop:disable Metrics/BlockLength
 
-describe Gnc do
+describe Gnlr do
   describe ".version" do
     it "returns current version" do
       expect(subject.version).to match(/^[\d]+\.[\d]+\.[\d]+$/)
@@ -11,17 +11,17 @@ describe Gnc do
 
   describe ".logger" do
     it "returns a logger" do
-      expect(Gnc.logger).to be_kind_of Logger
+      expect(Gnlr.logger).to be_kind_of Logger
     end
   end
 
   describe ".logger=" do
     it "creates a new logger" do
-      id = Gnc.logger.object_id
-      info = Gnc.logger.to_s
-      Gnc.logger = Logger.new("/dev/null")
-      expect(Gnc.logger.object_id).to_not eq id
-      expect(Gnc.logger.to_s).to_not eq info
+      id = Gnlr.logger.object_id
+      info = Gnlr.logger.to_s
+      Gnlr.logger = Logger.new("/dev/null")
+      expect(Gnlr.logger.object_id).to_not eq id
+      expect(Gnlr.logger.to_s).to_not eq info
     end
   end
 

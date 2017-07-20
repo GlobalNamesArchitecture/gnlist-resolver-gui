@@ -22,7 +22,7 @@ import Resolver.View.Slider exposing (..)
 
 view : Resolver -> DataSource -> Terms -> Html Msg
 view resolver ds terms =
-    contentWrapper (CrossmappingHeader ds)
+    contentWrapper (ListMatchingHeader ds)
         [ viewIngestionStage <| ingestionResolverProgress resolver
         , viewResolutionStage <| resolutionResolverProgress resolver
         , viewGraph resolver
@@ -64,9 +64,9 @@ downloadOutputLinks terms { stopTrigger } =
     let
         msg =
             if stopTrigger then
-                I18n.t DownloadPartialCrossmapping
+                I18n.t DownloadPartialMatching
             else
-                I18n.t DownloadCompletedCrossmapping
+                I18n.t DownloadCompletedMatching
 
         csvOutput =
             terms.output

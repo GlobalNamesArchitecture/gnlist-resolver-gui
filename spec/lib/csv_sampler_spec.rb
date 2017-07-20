@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gnc::CsvSampler do
+describe Gnlr::CsvSampler do
   describe ".sample" do
     let(:file) { open(File.join(__dir__, "..", "files", "taxonid_as_id.csv")) }
     let(:col_sep) { "," }

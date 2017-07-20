@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Gnc (Global Names Crossmap Web) module defines project's name space, sets
-# environment and connection to the database
-module Gnc
+# Gnlr (Global Names List Resolvder GUI) module defines
+# the project's name space, sets environment and connection to the database
+module Gnlr
   ROOT_PATH = File.join(__dir__, "..")
   DEFAULT_ENV_FILE = File.join(ROOT_PATH, "config", "env.sh")
 

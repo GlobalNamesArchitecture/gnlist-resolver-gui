@@ -53,7 +53,7 @@ task(:release) do
   begin
     require "git"
     g = Git.open(File.dirname(__FILE__))
-    new_tag = Gnc.version
+    new_tag = Gnlr.version
     g.add_tag("v#{new_tag}")
     g.add(all: true)
     g.commit(":shipit: Releasing version #{new_tag}")

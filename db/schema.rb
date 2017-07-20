@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 20150428033943) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "crossmaps", id: :serial, force: :cascade do |t|
+  create_table "list_matchers", id: :serial, force: :cascade do |t|
     t.string "filename"
     t.string "input"
     t.string "output"

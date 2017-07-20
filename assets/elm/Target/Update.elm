@@ -40,7 +40,7 @@ saveTarget : String -> Int -> Cmd Msg
 saveTarget token targetId =
     let
         url =
-            "/crossmaps"
+            "/list_matchers"
     in
         Http.send SaveTarget
             (H.put url <| TE.body token targetId)

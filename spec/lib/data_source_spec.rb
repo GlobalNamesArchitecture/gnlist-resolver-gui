@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-describe Gnc::DataSource do
-  subject { Gnc::DataSource }
+describe Gnlr::DataSource do
+  subject { Gnlr::DataSource }
 
   describe ".fetch" do
-    subject { Gnc::DataSource.fetch }
+    subject { Gnlr::DataSource.fetch }
     it "returns data source information from GN resolver" do
       expect(subject).to be_kind_of Array
     end

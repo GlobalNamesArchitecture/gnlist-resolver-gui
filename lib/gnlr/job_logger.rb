@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-module Gnc
-  # Redirects logs from crossmapper
+module Gnlr
+  # Redirects logs from the name matching gem
   class JobLogger
     def initialize(token)
       @token = token
-      @output = File.open(File.join("tmp", "gnc_#{token}.log"), "w:utf-8")
+      @output = File.open(File.join("tmp", "gnlr_#{token}.log"), "w:utf-8")
     end
 
     def info(log)
