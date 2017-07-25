@@ -23,6 +23,7 @@ import Resolver.View.Slider exposing (..)
 view : Resolver -> DataSource -> Terms -> Html Msg
 view resolver ds terms =
     contentWrapper (ListMatchingHeader ds)
+        ResolverDescription
         [ viewIngestionStage <| ingestionResolverProgress resolver
         , viewResolutionStage <| resolutionResolverProgress resolver
         , viewGraph resolver

@@ -6,6 +6,7 @@ import Material.Typography as Typo
 import Material.Elevation as Elevation
 import Material.Footer as Footer
 import Html exposing (Html, h2, h3, text)
+import Markdown
 import I18n exposing (Translation(..))
 import Models exposing (Model)
 import Messages exposing (Msg(Mdl))
@@ -30,13 +31,16 @@ layout { mdl, softwareVersion } content =
         }
 
 
-contentWrapper : Translation b -> List (Html a) -> Html a
-contentWrapper translation content =
+contentWrapper : Translation b -> Translation b -> List (Html a) -> Html a
+contentWrapper headerTranslation bodyTranslation content =
     let
         heading =
-            Options.styled h3 [ Typo.headline ] [ text <| I18n.t translation ]
+            Options.styled h3 [ Typo.headline ] [ text <| I18n.t headerTranslation ]
+
+        description =
+            Markdown.toHtml [] <| I18n.t bodyTranslation
     in
-        Options.div [] <| heading :: content
+        Options.div [] <| heading :: description :: content
 
 
 pageHeader : List (Html Msg)

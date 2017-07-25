@@ -48,6 +48,10 @@ type Translation a
     | ApplicationName
     | HomeLinkText
     | UnknownTranslation
+    | UploadFileDescription
+    | ResolverDescription
+    | MapDescription
+    | PickReferenceDataDescription
 
 
 t : Translation a -> String
@@ -118,16 +122,14 @@ t translation =
         ResolutionStatus ->
             "Resolution Status:"
 
-        ResolverStatus resolverProgress ->
-            case resolverProgress of
-                Pending ->
-                    "Pending"
+        ResolverStatus Pending ->
+            "Pending"
 
-                InProgress input ->
-                    "In Progress " ++ etaString input
+        ResolverStatus (InProgress input) ->
+            "In Progress " ++ etaString input
 
-                Complete input ->
-                    "Done " ++ summaryString input
+        ResolverStatus (Complete input) ->
+            "Done " ++ summaryString input
 
         DownloadPartialMatching ->
             "Download partial name-matching results: "
@@ -179,6 +181,30 @@ t translation =
 
         UnknownTranslation ->
             ""
+
+        UploadFileDescription ->
+            """
+Upload a CSV file to initiate the crossmapping process.
+
+Things to note:
+
+* Use comma-delimited format, not tab-delimited
+            """
+
+        ResolverDescription ->
+            """
+The generated file will include a mapping against the appropriate system.
+            """
+
+        MapDescription ->
+            """
+Select how to map data between the uploaded file and the result format.
+            """
+
+        PickReferenceDataDescription ->
+            """
+Select the appropriate system to crossreference.
+            """
 
 
 formattedFileSize : Bytes -> String

@@ -28,7 +28,7 @@ import FileUpload.Messages exposing (Msg(..))
 
 view : Upload -> Html Msg
 view upload =
-    contentWrapper BreadcrumbUploadFile [ formUpload upload ]
+    contentWrapper BreadcrumbUploadFile UploadFileDescription [ formUpload upload ]
 
 
 type UploadStatus

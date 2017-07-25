@@ -16,6 +16,7 @@ import Target.Models exposing (DataSources)
 view : DataSources -> Terms -> String -> Html Msg
 view ds terms token =
     contentWrapper BreadcrumbMapHeaders
+        MapDescription
         [ div []
             [ button [ onClick (nextMsg ds token) ] [ text <| I18n.t Continue ]
             , materialTable token terms

@@ -23,6 +23,7 @@ import Target.Messages exposing (Msg(..))
 view : Target -> String -> Html Msg
 view target token =
     contentWrapper BreadcrumbPickReferenceData
+        PickReferenceDataDescription
         [ div []
             [ div []
                 [ button [ onClick <| ToResolver token ] [ text <| I18n.t Continue ]
