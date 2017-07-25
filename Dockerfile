@@ -12,7 +12,7 @@ RUN apt-get update && \
     curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh && \
     bash nodesource_setup.sh && \
     apt-get update && \
-    apt-get install -y ruby2.3 ruby2.3-dev build-essential git vim \
+    apt-get install -y ruby2.4 ruby2.4-dev build-essential git vim \
     qt5-default libqt5webkit5-dev gstreamer1.0-plugins-base locales \
     gstreamer1.0-tools gstreamer1.0-x \
     libpq-dev postgresql-client dnsutils libmagic-dev \
