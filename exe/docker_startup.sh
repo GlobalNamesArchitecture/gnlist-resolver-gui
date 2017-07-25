@@ -2,7 +2,6 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-
 function wait_for_db {
   sleep 3
 
@@ -24,7 +23,7 @@ function development {
 }
 
 function production {
-  cd /app && npm run build && mkdir -p public/assets/js && mv dist/static/js/* public/assets/js
+  cd /app && npm run build && mkdir -p public && mv dist/* public/
 
   bundle exec rake db:migrate
   RACK_ENV=production puma -C config/docker/puma.rb

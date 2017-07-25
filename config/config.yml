@@ -3,6 +3,7 @@ server: <%= ENV["RACKAPP_SERVER"] %>
 data_sources: <%= ENV["RACKAPP_DATA_SOURCES"] %>
 resolver_url: <%= ENV["RACKAPP_RESOLVER_URL_CLIENT"] %>
 internal_resolver_url: <%= ENV["RACKAPP_RESOLVER_URL_SERVER"] %>
+software_version: <%= ENV["RACKAPP_SOFTWARE_VERSION"] %>
 database:
   common: &common
     adapter: postgresql

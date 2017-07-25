@@ -60,3 +60,7 @@ yarn-error.log
 /v8-compile-cache-*
 # generated from Webpack's Elm compilation, e.g. 11766-79-107q5yl.79tp47k3xr.js
 /*.*.js
+
+/public/index.html
+/public/*.js
+/public/*.css

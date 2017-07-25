@@ -14,3 +14,4 @@ data:
   async.workers: "4"
   data.sources: "[1,2,3,4,5,8,9,11,12,165,167,169,172,173,174,175,177,179,180]"
   puma.workers: "4"
+  software.version: "0.0.3"

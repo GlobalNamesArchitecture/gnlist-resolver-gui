@@ -1,8 +1,0 @@
-%div{ id: :main }
-  %noscript Please make JavaScript available in your browser
-
-- content_for :head_content do
-  %meta{ name: "resolverUrl", value: Gnlr.conf.resolver_url }
-  %meta{ name: "localDomain", value: Gnlr.conf.server }
-  %meta{ name: "dataSourcesIds", value: Gnlr.conf.data_sources.to_json }
-  %meta{ name: "softwareVersion", value: Gnlr.version }

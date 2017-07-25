@@ -19,6 +19,8 @@ services:
       - pg:/var/lib/postgres/data
   webpack:
     build: .
+    env_file:
+      - "config/env.sh"
     command: bash -c "npm run refresh && npm run start -- --host=0.0.0.0 --port=8080"
     volumes:
       - .:/app

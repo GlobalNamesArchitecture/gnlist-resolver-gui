@@ -5,24 +5,22 @@ var HtmlWebpackPlugin = require("html-webpack-plugin");
 var autoprefixer = require("autoprefixer");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var CopyWebpackPlugin = require("copy-webpack-plugin");
-var entryPath = path.join(__dirname, "assets/static/index.js");
-var outputPath = path.join(__dirname, "dist");
 
 console.log("WEBPACK GO!");
 
 // determine build env
 var TARGET_ENV =
   process.env.npm_lifecycle_event === "build" ? "production" : "development";
-var outputFilename = "[name].js";
 
 // common webpack config
 var commonConfig = {
   output: {
-    path: outputPath,
-    filename: `/static/js/${outputFilename}`
+    path: path.resolve(__dirname, "dist/"),
+    filename: "[hash].js"
   },
 
   resolve: {
+    modulesDirectories: ["node_modules"],
     extensions: ["", ".js", ".elm"]
   },
 
@@ -44,6 +42,20 @@ var commonConfig = {
     ]
   },
 
+  plugins: [
+    new webpack.EnvironmentPlugin([
+      "RACKAPP_RESOLVER_URL_CLIENT",
+      "RACKAPP_SERVER",
+      "RACKAPP_DATA_SOURCES",
+      "RACKAPP_SOFTWARE_VERSION"
+    ]),
+    new HtmlWebpackPlugin({
+      template: "src/static/index.html",
+      inject: "body",
+      filename: "index.html"
+    })
+  ],
+
   postcss: [autoprefixer({ browsers: ["last 2 versions"] })]
 };
 
@@ -51,12 +63,14 @@ if (TARGET_ENV === "development") {
   console.log("Serving locally...");
 
   module.exports = merge(commonConfig, {
-    entry: ["webpack-dev-server/client?http://localhost:8080", entryPath],
+    entry: [
+      "webpack-dev-server/client?http://localhost:8080",
+      path.join(__dirname, "src/static/index.js")
+    ],
 
     devServer: {
-      // serve index.html in place of 404 responses
-      historyApiFallback: true,
-      contentBase: "./assets"
+      inline: true,
+      progress: true
     },
 
     module: {
@@ -85,7 +99,7 @@ if (TARGET_ENV === "production") {
   console.log("Building for prod...");
 
   module.exports = merge(commonConfig, {
-    entry: entryPath,
+    entry: path.join(__dirname, "src/static/index.js"),
 
     module: {
       loaders: [
@@ -106,11 +120,20 @@ if (TARGET_ENV === "production") {
     },
 
     plugins: [
+      new CopyWebpackPlugin([
+        {
+          from: "src/static/img/",
+          to: "static/img/"
+        },
+        {
+          from: "src/favicon.ico"
+        }
+      ]),
+
       new webpack.optimize.OccurenceOrderPlugin(),
 
-      new ExtractTextPlugin("static/css/[name]-[hash].css", {
-        allChunks: true
-      }),
+      // extract CSS into a separate file
+      new ExtractTextPlugin("./[hash].css", { allChunks: true }),
 
       // minify & mangle JS/CSS
       new webpack.optimize.UglifyJsPlugin({
