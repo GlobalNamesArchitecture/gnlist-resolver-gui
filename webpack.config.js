@@ -1,29 +1,29 @@
-var path              = require( 'path' );
-var webpack           = require( 'webpack' );
-var merge             = require( 'webpack-merge' );
-var HtmlWebpackPlugin = require( 'html-webpack-plugin' );
-var autoprefixer      = require( 'autoprefixer' );
-var ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
-var CopyWebpackPlugin = require( 'copy-webpack-plugin' );
-var entryPath         = path.join( __dirname, 'assets/static/index.js' );
-var outputPath        = path.join( __dirname, 'dist' );
+var path = require("path");
+var webpack = require("webpack");
+var merge = require("webpack-merge");
+var HtmlWebpackPlugin = require("html-webpack-plugin");
+var autoprefixer = require("autoprefixer");
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var CopyWebpackPlugin = require("copy-webpack-plugin");
+var entryPath = path.join(__dirname, "assets/static/index.js");
+var outputPath = path.join(__dirname, "dist");
 
-console.log( 'WEBPACK GO!');
+console.log("WEBPACK GO!");
 
 // determine build env
-var TARGET_ENV = process.env.npm_lifecycle_event === 'build' ? 'production' : 'development';
-var outputFilename = '[name].js';
+var TARGET_ENV =
+  process.env.npm_lifecycle_event === "build" ? "production" : "development";
+var outputFilename = "[name].js";
 
 // common webpack config
 var commonConfig = {
-
   output: {
-    path:       outputPath,
+    path: outputPath,
     filename: `/static/js/${outputFilename}`
   },
 
   resolve: {
-    extensions: ['', '.js', '.elm']
+    extensions: ["", ".js", ".elm"]
   },
 
   module: {
@@ -31,82 +31,75 @@ var commonConfig = {
     loaders: [
       {
         test: /\.(eot|ttf|woff|woff2|svg)$/,
-        loader: 'file-loader'
+        loader: "file-loader"
       },
       {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: "babel-loader",
         query: {
-          presets: ['es2015']
+          presets: ["es2015"]
         }
       }
     ]
   },
 
-  postcss: [ autoprefixer( { browsers: ['last 2 versions'] } ) ]
+  postcss: [autoprefixer({ browsers: ["last 2 versions"] })]
+};
 
-}
+if (TARGET_ENV === "development") {
+  console.log("Serving locally...");
 
-if ( TARGET_ENV === 'development' ) {
-  console.log( 'Serving locally...');
-
-  module.exports = merge( commonConfig, {
-
-    entry: [
-      'webpack-dev-server/client?http://localhost:8080',
-      entryPath
-    ],
+  module.exports = merge(commonConfig, {
+    entry: ["webpack-dev-server/client?http://localhost:8080", entryPath],
 
     devServer: {
       // serve index.html in place of 404 responses
       historyApiFallback: true,
-      contentBase: './assets'
+      contentBase: "./assets"
     },
 
     module: {
       loaders: [
         {
-          test:    /\.elm$/,
+          test: /\.elm$/,
           exclude: [/elm-stuff/, /node_modules/],
-          loader:  'elm-hot!elm-webpack?verbose=true&warn=true&debug=true'
+          loader: "elm-hot!elm-webpack?verbose=true&warn=true&debug=true"
         },
         {
           test: /\.(css|scss)$/,
           loaders: [
-            'style-loader',
-            'css-loader',
-            'postcss-loader',
-            'sass-loader'
+            "style-loader",
+            "css-loader",
+            "postcss-loader",
+            "sass-loader"
           ]
         }
       ]
     }
-
   });
 }
 
 // additional webpack settings for prod env (when invoked via 'npm run build')
-if ( TARGET_ENV === 'production' ) {
-  console.log( 'Building for prod...');
+if (TARGET_ENV === "production") {
+  console.log("Building for prod...");
 
-  module.exports = merge( commonConfig, {
-
+  module.exports = merge(commonConfig, {
     entry: entryPath,
 
     module: {
       loaders: [
         {
-          test:    /\.elm$/,
+          test: /\.elm$/,
           exclude: [/elm-stuff/, /node_modules/],
-          loader:  'elm-webpack'
+          loader: "elm-webpack"
         },
         {
           test: /\.(css|scss)$/,
-          loader: ExtractTextPlugin.extract( 'style-loader', [
-            'css-loader',
-            'postcss-loader',
-            'sass-loader'
+          loader: ExtractTextPlugin.extract("style-loader", [
+            "css-loader",
+            "postcss-loader",
+            "sass-loader"
           ])
         }
       ]
@@ -115,15 +108,16 @@ if ( TARGET_ENV === 'production' ) {
     plugins: [
       new webpack.optimize.OccurenceOrderPlugin(),
 
-      new ExtractTextPlugin( 'static/css/[name]-[hash].css', { allChunks: true } ),
+      new ExtractTextPlugin("static/css/[name]-[hash].css", {
+        allChunks: true
+      }),
 
       // minify & mangle JS/CSS
       new webpack.optimize.UglifyJsPlugin({
-          minimize:   true,
-          compressor: { warnings: false }
-          // mangle:  true
+        minimize: true,
+        compressor: { warnings: false }
+        // mangle:  true
       })
     ]
-
   });
 }
