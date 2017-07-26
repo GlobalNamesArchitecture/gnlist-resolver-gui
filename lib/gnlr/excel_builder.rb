@@ -6,7 +6,7 @@ module Gnlr
     def initialize(output_path)
       @file = File.split(output_path).last
       @file_path = output_path
-      @excel_path = output_path.gsub(/csv$/, "xlsx")
+      @excel_path = excel_path(output_path)
     end
 
     def build
@@ -21,6 +21,10 @@ module Gnlr
     end
 
     private
+
+    def excel_path(path)
+      path.gsub(File.extname(path), ".xlsx")
+    end
 
     def insert_rows(sheet)
       CSV.open(@file_path, col_sep: "\t").each do |l|
