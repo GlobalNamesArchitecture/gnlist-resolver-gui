@@ -4,8 +4,8 @@ import Material.Layout as Layout
 import Material.Options as Options
 import Material.Typography as Typo
 import Material.Elevation as Elevation
-import Material.Footer as Footer
 import Html exposing (Html, h2, h3, text)
+import Widgets.BreadCrumbs as Breadcrumbs
 import Markdown
 import I18n exposing (Translation(..))
 import Models exposing (Model)
@@ -13,19 +13,24 @@ import Messages exposing (Msg(Mdl))
 
 
 layout : Model -> List (Html Msg) -> Html Msg
-layout { mdl, softwareVersion } content =
+layout ({ mdl, softwareVersion } as model) content =
     Layout.render Mdl
         mdl
         [ Layout.fixedHeader
-        , Layout.scrolling
         ]
-        { header = pageHeader
-        , drawer = []
+        { header = pageHeader softwareVersion
+        , drawer =
+            [ Layout.navigation []
+                [ Layout.link [ Layout.href "/" ] [ text <| I18n.t BreadcrumbUploadFile ]
+                , Layout.link [ Layout.href licenseUrl ] [ text <| I18n.t MITLicense ]
+                , Layout.link [ Layout.href releasesUrl ] [ text <| I18n.t Version ++ " " ++ softwareVersion ]
+                ]
+            ]
         , tabs = ( [], [] )
         , main =
-            [ Options.div [ Elevation.e2, Options.cs "container" ]
+            [ Options.div [] [ Breadcrumbs.view model ]
+            , Options.div [ Elevation.e2, Options.cs "container" ]
                 [ Options.div [ Options.cs "container__content" ] content
-                , pageFooter softwareVersion
                 ]
             ]
         }
@@ -35,7 +40,7 @@ contentWrapper : Translation b -> Translation b -> List (Html a) -> Html a
 contentWrapper headerTranslation bodyTranslation content =
     let
         heading =
-            Options.styled h3 [ Typo.headline ] [ text <| I18n.t headerTranslation ]
+            Options.styled h2 [ Typo.display2 ] [ text <| I18n.t headerTranslation ]
 
         description =
             Markdown.toHtml [] <| I18n.t bodyTranslation
@@ -43,15 +48,14 @@ contentWrapper headerTranslation bodyTranslation content =
         Options.div [] <| heading :: description :: content
 
 
-pageHeader : List (Html Msg)
-pageHeader =
-    [ Layout.row [ Elevation.e4 ]
-        [ Layout.title []
-            [ Layout.link [ Layout.href "/" ]
-                [ Options.styled h2
-                    [ Typo.headline ]
-                    [ text <| I18n.t ApplicationName ]
-                ]
+pageHeader : String -> List (Html Msg)
+pageHeader version =
+    [ Layout.row []
+        [ Layout.navigation [] [ Layout.title [] [ text <| I18n.t ApplicationName ] ]
+        , Layout.spacer
+        , Layout.navigation []
+            [ Layout.link [ Layout.href licenseUrl ] [ text <| I18n.t MITLicense ]
+            , Layout.link [ Layout.href releasesUrl ] [ text <| I18n.t Version ++ " " ++ version ]
             ]
         ]
     ]
@@ -65,17 +69,3 @@ licenseUrl =
 releasesUrl : String
 releasesUrl =
     "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/releases"
-
-
-pageFooter : String -> Html a
-pageFooter version =
-    Footer.mini []
-        { left =
-            Footer.left []
-                [ Footer.links []
-                    [ Footer.linkItem [ Footer.href licenseUrl ] [ Footer.html <| text <| I18n.t MITLicense ]
-                    , Footer.linkItem [ Footer.href releasesUrl ] [ Footer.html <| text <| I18n.t Version ++ " " ++ version ]
-                    ]
-                ]
-        , right = Footer.right [] []
-        }

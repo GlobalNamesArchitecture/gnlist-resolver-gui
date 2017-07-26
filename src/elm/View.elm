@@ -12,15 +12,13 @@ import Terms.View as Terms
 import Target.View as Target
 import Target.Helper as Target
 import Resolver.View as Resolver
-import Widgets.BreadCrumbs as Breadcrumbs
 
 
 view : Model -> Html Msg
 view model =
     Layout.layout model
         [ div []
-            [ Breadcrumbs.view model
-            , Error.view model
+            [ Error.view model
             , findRoute model
             ]
         ]
