@@ -61,6 +61,9 @@ yarn-error.log
 # generated from Webpack's Elm compilation, e.g. 11766-79-107q5yl.79tp47k3xr.js
 /*.*.js
 
+/dist/*
+/public/favicon.ico
+/public/static
 /public/index.html
 /public/*.js
 /public/*.css

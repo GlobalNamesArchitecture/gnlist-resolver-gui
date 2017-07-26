@@ -116,8 +116,7 @@ viewCrumb cellPosition crumbActivity txt icon =
     in
         [ Grid.cell ([ Options.cs "breadcrumbs__item", Grid.size Grid.Desktop 2, Grid.size Grid.Tablet 2 ] ++ additionalOptions) <|
             [ Options.div [ Options.cs "breadcrumbs__item-wrapper", Options.center ]
-                [ Options.div [ Options.cs icon, Options.cs "breadcrumbs__item-icon" ] [ Icon.i icon ]
-                , Options.div [ Options.cs "breadcrumbs__item-label" ] [ text txt ]
+                [ Options.span [ Options.cs "breadcrumbs__item-label" ] [ text txt ]
                 ]
             ]
         ]
@@ -128,4 +127,4 @@ arrowCrumb : Grid.Cell a
 arrowCrumb =
     Grid.cell
         [ Grid.size Grid.Desktop 1, Grid.size Grid.Tablet 1, Grid.size Grid.Phone 4, Grid.align Grid.Middle ]
-        [ Options.span [ Options.cs "breadcrumbs__item-arrow", Options.center ] [ Icon.view "keyboard_arrow_right" [ Icon.size36 ] ] ]
+        [ Options.span [ Options.cs "breadcrumbs__item-arrow", Options.center ] [ Icon.view "keyboard_arrow_right" [ Icon.size18 ] ] ]

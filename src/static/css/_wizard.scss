@@ -1,33 +1,33 @@
 @import "variables";
 
+
+.breadcrumbs__item:nth-of-type(1) .breadcrumbs__item-label::before {
+  content: "Step 1: \a";
+  white-space: pre;
+}
+
+.breadcrumbs__item:nth-of-type(3) .breadcrumbs__item-label::before {
+  content: "Step 2: \a";
+  white-space: pre;
+}
+
+.breadcrumbs__item:nth-of-type(5) .breadcrumbs__item-label::before {
+  content: "Step 3: \a";
+  white-space: pre;
+}
+
 .breadcrumbs__item.breadcrumbs__item-active, .breadcrumbs__item.breadcrumbs__item-complete {
   opacity: 1;
+}
+
+.breadcrumbs__item.breadcrumbs__item-active {
+  font-weight: bold;
 }
 
 .breadcrumbs__item {
   opacity: 0.3;
 }
 
-.breadcrumbs__item-wrapper {
-  flex-direction: column;
-  flex: 1;
-
-  .done i {
-    opacity: 1;
-    border-color: $darkGreen;
-    color: $darkGreen;
-    background: $lightGreen;
-  }
-}
-
-.breadcrumbs__item-icon {
-  i {
-    border-radius: 30px;
-    border: 2px solid #333;
-    padding: 5px;
-  }
-}
-
-.breadcrumbs__item-label {
-  padding-top: .5em;
+.breadcrumbs {
+  padding: 1em 0;
 }

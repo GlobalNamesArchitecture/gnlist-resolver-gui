@@ -9,49 +9,50 @@ import Resolver.Models exposing (ProcessedRecordCount(..), MatchType(..))
 
 
 type Translation a
-    = UploadFileSize Bytes
-    | UploadFileName FileName
-    | UploadSelection
-    | UploadStarted
-    | UploadFailed
-    | UploadSuccessful
-    | UploadContinue
-    | UploadInProgress Int
-    | UploadComplete
-    | JavaScriptFileUploadUnsupported
-    | Continue
-    | BreadcrumbUploadFile
+    = ApplicationName
+    | BreadcrumbListMatcherNames
     | BreadcrumbMapHeaders
     | BreadcrumbPickReferenceData
-    | BreadcrumbListMatcherNames
-    | TermMatchWithHeader
-    | CloseButton
-    | TermTranslationHeader String String
-    | ListMatchingHeader DataSource
-    | IngestionStatus
-    | ResolutionStatus
-    | ResolverStatus (ResolverProgress a)
-    | DownloadPartialMatching
-    | DownloadCompletedMatching
+    | BreadcrumbUploadFile
     | CSVDownloadLink
-    | XLSXDownloadLink
-    | DownloadText
     | CancelResolution
     | CancelResolutionInformation
-    | PieChartLegendText MatchType
-    | SearchPlaceholder
-    | NoErrors
+    | CloseButton
+    | Continue
     | DismissErrors
-    | RouteNotFound
-    | MITLicense
-    | Version
-    | ApplicationName
+    | DownloadCompletedMatching
+    | DownloadPartialMatching
+    | DownloadText
+    | HelpLinkText
     | HomeLinkText
-    | UnknownTranslation
-    | UploadFileDescription
-    | ResolverDescription
+    | IngestionStatus
+    | JavaScriptFileUploadUnsupported
+    | ListMatchingHeader DataSource
+    | MITLicense
     | MapDescription
+    | NoErrors
     | PickReferenceDataDescription
+    | PieChartLegendText MatchType
+    | ResolutionStatus
+    | ResolverDescription
+    | ResolverStatus (ResolverProgress a)
+    | RouteNotFound
+    | SearchPlaceholder
+    | TermMatchWithHeader
+    | TermTranslationHeader String String
+    | UnknownTranslation
+    | UploadComplete
+    | UploadContinue
+    | UploadFailed
+    | UploadFileDescription
+    | UploadFileName FileName
+    | UploadFileSize Bytes
+    | UploadInProgress Int
+    | UploadSelection
+    | UploadStarted
+    | UploadSuccessful
+    | Version
+    | XLSXDownloadLink
 
 
 t : Translation a -> String
@@ -64,7 +65,7 @@ t translation =
             fileName
 
         UploadSelection ->
-            "Please select a CSV file to upload."
+            "Upload CSV"
 
         UploadStarted ->
             "Upload started."
@@ -91,7 +92,7 @@ t translation =
             "Continue"
 
         BreadcrumbUploadFile ->
-            "Upload a File"
+            "Upload a CSV File With Scientific Names"
 
         BreadcrumbMapHeaders ->
             "Map Headers"
@@ -138,10 +139,10 @@ t translation =
             "Download name-matching results: "
 
         CSVDownloadLink ->
-            "CSV"
+            "CSV file"
 
         XLSXDownloadLink ->
-            "XLSX"
+            "XLSX file"
 
         DownloadText ->
             "Download"
@@ -174,7 +175,10 @@ t translation =
             "Version"
 
         ApplicationName ->
-            "Global Names List Resolver"
+            "Scientific Names List Resolver"
+
+        HelpLinkText ->
+            "Help"
 
         HomeLinkText ->
             "Home"
@@ -184,26 +188,37 @@ t translation =
 
         UploadFileDescription ->
             """
-Upload a CSV file to initiate the crossmapping process.
+This app compares your list of scientific names with other datasets.
+For a successful matching of names make sure that your CSV file meets the following requirements:
 
-Things to note:
+**CSV Headers Format:** Corresponds to one of the
+[examples](https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/wiki/Help#input-file-format)
 
-* Use comma-delimited format, not tab-delimited
-            """
+**Encoding:** UTF-8
+
+**CSV field separator:** comma, semicolon, tab (, ; \\t)
+"""
 
         ResolverDescription ->
             """
-The generated file will include a mapping against the appropriate system.
+When the process is complete you will be able to download results of the name matching.
             """
 
         MapDescription ->
             """
-Select how to map data between the uploaded file and the result format.
+Green headers show terms that were recognized automatically. You can
+manually change the mapping of terms by manual editing.
+
+There are two mutually exlusive approches. In one scientific names are given
+in one field and mapped to a **scientificName** term, or they can be
+split into **genus**, **species**, **scientificNameAuthorship** etc.
+
+Each term can happen only once and is removed from available terms list if it is already used.  White-colored headers will be ignored during comparison.
             """
 
         PickReferenceDataDescription ->
             """
-Select the appropriate system to crossreference.
+Choose a data source to match your names against
             """
 
 

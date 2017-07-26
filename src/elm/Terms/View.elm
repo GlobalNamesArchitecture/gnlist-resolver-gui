@@ -7,7 +7,7 @@ import Html.Events exposing (onClick, on, targetValue)
 import Html.Attributes exposing (class, value, id, list)
 import Json.Decode as J
 import Terms.Models exposing (Terms, Term, Header, Row, allTermValues)
-import View.Layout exposing (contentWrapper)
+import View.Layout exposing (contentWrapper, styledButton)
 import I18n exposing (Translation(..))
 import Terms.Messages exposing (Msg(..))
 import Target.Models exposing (DataSources)
@@ -18,10 +18,16 @@ view ds terms token =
     contentWrapper BreadcrumbMapHeaders
         MapDescription
         [ div []
-            [ button [ onClick (nextMsg ds token) ] [ text <| I18n.t Continue ]
+            [ continueButton ds token
             , materialTable token terms
+            , continueButton ds token
             ]
         ]
+
+
+continueButton : DataSources -> String -> Html Msg
+continueButton ds token =
+    styledButton [] (nextMsg ds token) Continue
 
 
 viewRows : List Row -> List (Html a)

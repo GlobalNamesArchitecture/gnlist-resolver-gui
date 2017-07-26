@@ -20,7 +20,7 @@ import Material.Card as Card
 import Material.Color as Color
 import Json.Decode as JD
 import Material.Progress as Loading
-import View.Layout exposing (contentWrapper)
+import View.Layout exposing (contentWrapper, buttonStyles)
 import I18n exposing (Translation(..))
 import FileUpload.Models exposing (Upload, File, Token(..), Bytes(..), UploadProgress(..), progressToCompletionPercent)
 import FileUpload.Messages exposing (Msg(..))
@@ -124,6 +124,7 @@ uploadButton isWorking file =
             input
                 [ id "upload-button"
                 , type_ "button"
+                , buttonStyles
                 , value <| I18n.t UploadContinue
                 , disableUpload
                 , onClick FileUpload
@@ -137,8 +138,8 @@ uploadButton isWorking file =
 fileInput : String -> Html Msg
 fileInput nodeId =
     div []
-        [ label []
-            [ Icon.i "file_upload"
+        [ label [ buttonStyles ]
+            [ text <| I18n.t UploadSelection
             , input
                 [ id nodeId
                 , name nodeId
@@ -148,7 +149,6 @@ fileInput nodeId =
                 ]
                 []
             ]
-        , text <| I18n.t UploadSelection
         ]
 
 

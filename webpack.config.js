@@ -70,6 +70,7 @@ if (TARGET_ENV === "development") {
 
     devServer: {
       inline: true,
+      contentBase: "./src",
       progress: true
     },
 
