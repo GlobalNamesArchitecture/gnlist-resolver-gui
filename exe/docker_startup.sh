@@ -23,7 +23,8 @@ function development {
 }
 
 function production {
-  cd /app && npm run build && mkdir -p public && mv dist/* public/
+  cd /app && npm run build && mkdir -p public
+  cp -r ./dist/* ./public && rm -R ./dist/*
 
   bundle exec rake db:migrate
   RACK_ENV=production puma -C config/docker/puma.rb
