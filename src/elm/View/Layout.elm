@@ -42,7 +42,7 @@ contentWrapper : Translation b -> Translation b -> List (Html a) -> Html a
 contentWrapper headerTranslation bodyTranslation content =
     let
         heading =
-            Options.styled h2 [ Typo.display2 ] [ text <| I18n.t headerTranslation ]
+            Options.styled h2 [ Typo.display1 ] [ text <| I18n.t headerTranslation ]
 
         description =
             Markdown.toHtml [] <| I18n.t bodyTranslation
