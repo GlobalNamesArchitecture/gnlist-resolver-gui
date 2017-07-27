@@ -15,7 +15,7 @@ import Html.Events exposing (onClick, on, targetValue)
 import Json.Decode as J
 import Maybe exposing (withDefault)
 import I18n exposing (Translation(..))
-import View.Layout exposing (contentWrapper)
+import View.Layout exposing (contentWrapper, styledButton)
 import Target.Models exposing (Target, DataSources, DataSource)
 import Target.Messages exposing (Msg(..))
 
@@ -26,7 +26,7 @@ view target token =
         PickReferenceDataDescription
         [ div []
             [ div []
-                [ button [ onClick <| ToResolver token ] [ text <| I18n.t Continue ]
+                [ continueButton token
                 ]
             , div []
                 [ input
@@ -41,6 +41,11 @@ view target token =
             , selectTarget target token
             ]
         ]
+
+
+continueButton : String -> Html Msg
+continueButton token =
+    styledButton [] (ToResolver token) Continue
 
 
 normalize : String -> String

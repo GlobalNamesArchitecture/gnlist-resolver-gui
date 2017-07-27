@@ -1,10 +1,12 @@
-module View.Layout exposing (layout, contentWrapper)
+module View.Layout exposing (layout, contentWrapper, styledButton, buttonStyles)
 
 import Material.Layout as Layout
 import Material.Options as Options
 import Material.Typography as Typo
 import Material.Elevation as Elevation
-import Html exposing (Html, h2, h3, text)
+import Html exposing (Html, Attribute, h2, h3, text, button)
+import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 import Widgets.BreadCrumbs as Breadcrumbs
 import Markdown
 import I18n exposing (Translation(..))
@@ -46,6 +48,16 @@ contentWrapper headerTranslation bodyTranslation content =
             Markdown.toHtml [] <| I18n.t bodyTranslation
     in
         Options.div [] <| heading :: description :: content
+
+
+buttonStyles : Attribute a
+buttonStyles =
+    class "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+
+
+styledButton : List (Attribute a) -> a -> Translation b -> Html a
+styledButton options f translation =
+    button (buttonStyles :: onClick f :: options) [ text <| I18n.t translation ]
 
 
 pageHeader : String -> List (Html Msg)
