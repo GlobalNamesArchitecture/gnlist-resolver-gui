@@ -64,7 +64,7 @@ t translation =
             fileName
 
         UploadSelection ->
-            "Please select a CSV file to upload."
+            "Upload CSV"
 
         UploadStarted ->
             "Upload started."

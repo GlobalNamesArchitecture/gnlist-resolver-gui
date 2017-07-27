@@ -138,8 +138,8 @@ uploadButton isWorking file =
 fileInput : String -> Html Msg
 fileInput nodeId =
     div []
-        [ label [ class "mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored" ]
-            [ Icon.i "file_upload"
+        [ label [ buttonStyles ]
+            [ text <| I18n.t UploadSelection
             , input
                 [ id nodeId
                 , name nodeId
@@ -149,7 +149,6 @@ fileInput nodeId =
                 ]
                 []
             ]
-        , text <| I18n.t UploadSelection
         ]
 
 
