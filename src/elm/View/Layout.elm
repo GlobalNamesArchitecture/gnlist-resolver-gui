@@ -4,8 +4,9 @@ import Material.Layout as Layout
 import Material.Options as Options
 import Material.Typography as Typo
 import Material.Elevation as Elevation
-import Html exposing (Html, Attribute, h2, h3, text, button)
-import Html.Attributes exposing (class)
+import Material.Color as Color
+import Html exposing (Html, Attribute, h2, h3, text, button, img)
+import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 import Widgets.BreadCrumbs as Breadcrumbs
 import Markdown
@@ -21,13 +22,7 @@ layout ({ mdl, softwareVersion } as model) content =
         [ Layout.fixedHeader
         ]
         { header = pageHeader softwareVersion
-        , drawer =
-            [ Layout.navigation []
-                [ Layout.link [ Layout.href "/" ] [ text <| I18n.t BreadcrumbUploadFile ]
-                , Layout.link [ Layout.href licenseUrl ] [ text <| I18n.t MITLicense ]
-                , Layout.link [ Layout.href releasesUrl ] [ text <| I18n.t Version ++ " " ++ softwareVersion ]
-                ]
-            ]
+        , drawer = []
         , tabs = ( [], [] )
         , main =
             [ Options.div [] [ Breadcrumbs.view model ]
@@ -60,14 +55,31 @@ styledButton options f translation =
     button (buttonStyles :: onClick f :: options) [ text <| I18n.t translation ]
 
 
+whiteBackground : Options.Property a b
+whiteBackground =
+    Color.background Color.white
+
+
+darkText : Options.Property a b
+darkText =
+    Color.text Color.primaryDark
+
+
 pageHeader : String -> List (Html Msg)
 pageHeader version =
-    [ Layout.row []
-        [ Layout.navigation [] [ Layout.title [] [ text <| I18n.t ApplicationName ] ]
+    [ Layout.row [ whiteBackground, darkText, Elevation.e4 ]
+        [ Layout.navigation []
+            [ Layout.title [ Options.cs "title__anchor" ]
+                [ Layout.link [ darkText, Layout.href "/" ]
+                    [ img [ src "static/img/catalogue-of-life.gif" ] []
+                    , Options.span [ Typo.title ] [ text <| I18n.t ApplicationName ]
+                    ]
+                ]
+            ]
         , Layout.spacer
         , Layout.navigation []
-            [ Layout.link [ Layout.href licenseUrl ] [ text <| I18n.t MITLicense ]
-            , Layout.link [ Layout.href releasesUrl ] [ text <| I18n.t Version ++ " " ++ version ]
+            [ Layout.link [ darkText, Layout.href licenseUrl ] [ text <| I18n.t MITLicense ]
+            , Layout.link [ darkText, Layout.href releasesUrl ] [ text <| I18n.t Version ++ " " ++ version ]
             ]
         ]
     ]
@@ -81,3 +93,13 @@ licenseUrl =
 releasesUrl : String
 releasesUrl =
     "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/releases"
+
+
+drawer : String -> List (Html a)
+drawer softwareVersion =
+    [ Layout.navigation []
+        [ Layout.link [ Layout.href "/" ] [ text <| I18n.t BreadcrumbUploadFile ]
+        , Layout.link [ Layout.href licenseUrl ] [ text <| I18n.t MITLicense ]
+        , Layout.link [ Layout.href releasesUrl ] [ text <| I18n.t Version ++ " " ++ softwareVersion ]
+        ]
+    ]

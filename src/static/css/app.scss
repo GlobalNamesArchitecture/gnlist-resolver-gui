@@ -11,3 +11,6 @@ body {
 .none {
   display: none;
 }
+
+.title__anchor, .title__anchor a, .title__anchor img { height: 100%; }
+.title__anchor { opacity: 1; }
