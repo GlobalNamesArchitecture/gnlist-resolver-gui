@@ -47,7 +47,8 @@ module Gnlr
       use Rack::ReverseProxy do
         reverse_proxy_options preserve_host: false
         reverse_proxy %r{\A\/\z}, "http://#{ENV['ASSET_HOST']}/"
-        reverse_proxy(/\A(.*\.(js|css|gif))\z/, "http://#{ENV['ASSET_HOST']}/$1")
+        reverse_proxy(/\A(.*\.(js|css|gif|png|svg))\z/,
+                      "http://#{ENV['ASSET_HOST']}/$1")
       end
     else
       get "/" do

@@ -6,7 +6,7 @@ import Material.Typography as Typo
 import Material.Elevation as Elevation
 import Material.Color as Color
 import Html exposing (Html, Attribute, h2, h3, text, button, img)
-import Html.Attributes exposing (class, src)
+import Html.Attributes exposing (class, src, width, style)
 import Html.Events exposing (onClick)
 import Widgets.BreadCrumbs as Breadcrumbs
 import Markdown
@@ -30,6 +30,7 @@ layout ({ mdl, softwareVersion } as model) content =
                 [ Options.div [ Options.cs "container__content" ] content
                 ]
             ]
+        , footer = pageFooter softwareVersion
         }
 
 
@@ -71,7 +72,28 @@ pageHeader version =
         [ Layout.navigation []
             [ Layout.title [ Options.cs "title__anchor" ]
                 [ Layout.link [ darkText, Layout.href "/" ]
-                    [ img [ src "static/img/catalogue-of-life.gif" ] []
+                    [ img [ src "static/img/gna-logo.svg", width 35,
+                      style [("margin-right", "10px")] ] []
+                    , Options.span [ Typo.title ] [ text <| I18n.t ApplicationName ]
+                    ]
+                ]
+            ]
+        , Layout.spacer
+        , Layout.navigation []
+            [ Layout.link [ darkText, Layout.href licenseUrl ] [ text <| I18n.t MITLicense ]
+            , Layout.link [ darkText, Layout.href releasesUrl ] [ text <| I18n.t Version ++ " " ++ version ]
+            ]
+        ]
+    ]
+
+pageFooter : String -> List (Html Msg)
+pageFooter version =
+    [ Layout.row [ whiteBackground, darkText, Elevation.e4 ]
+        [ Layout.navigation []
+            [ Layout.title [ Options.cs "title__anchor" ]
+                [ Layout.link [ darkText, Layout.href "/" ]
+                    [ img [ src "static/img/gna-logo.svg", width 35,
+                      style [("margin-right", "10px")] ] []
                     , Options.span [ Typo.title ] [ text <| I18n.t ApplicationName ]
                     ]
                 ]

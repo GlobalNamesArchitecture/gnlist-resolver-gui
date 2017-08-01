@@ -174,7 +174,7 @@ t translation =
             "Version"
 
         ApplicationName ->
-            "Global Names List Resolver"
+            "Scientific Names List Resolver"
 
         HomeLinkText ->
             "Home"
