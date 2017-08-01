@@ -4,6 +4,7 @@ import Material.Layout as Layout
 import Material.Options as Options
 import Material.Typography as Typo
 import Material.Elevation as Elevation
+import Material.Footer as Footer
 import Material.Color as Color
 import Html exposing (Html, Attribute, h2, h3, text, button, img)
 import Html.Attributes exposing (class, src, width, style)
@@ -21,16 +22,16 @@ layout ({ mdl, softwareVersion } as model) content =
         mdl
         [ Layout.fixedHeader
         ]
-        { header = pageHeader softwareVersion
+        { header = pageHeader
         , drawer = []
         , tabs = ( [], [] )
         , main =
             [ Options.div [] [ Breadcrumbs.view model ]
             , Options.div [ Elevation.e2, Options.cs "container" ]
                 [ Options.div [ Options.cs "container__content" ] content
+                , pageFooter softwareVersion
                 ]
             ]
-        , footer = pageFooter softwareVersion
         }
 
 
@@ -50,10 +51,10 @@ buttonStyles : Attribute a
 buttonStyles =
     class "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
 
-
 styledButton : List (Attribute a) -> a -> Translation b -> Html a
 styledButton options f translation =
-    button (buttonStyles :: onClick f :: options) [ text <| I18n.t translation ]
+    button (buttonStyles :: style [("margin", "15px 0px 15px 0px")] 
+            :: onClick f :: options) [ text <| I18n.t translation ]
 
 
 whiteBackground : Options.Property a b
@@ -66,8 +67,8 @@ darkText =
     Color.text Color.primaryDark
 
 
-pageHeader : String -> List (Html Msg)
-pageHeader version =
+pageHeader : List (Html Msg)
+pageHeader =
     [ Layout.row [ whiteBackground, darkText, Elevation.e4 ]
         [ Layout.navigation []
             [ Layout.title [ Options.cs "title__anchor" ]
@@ -80,32 +81,25 @@ pageHeader version =
             ]
         , Layout.spacer
         , Layout.navigation []
-            [ Layout.link [ darkText, Layout.href licenseUrl ] [ text <| I18n.t MITLicense ]
-            , Layout.link [ darkText, Layout.href releasesUrl ] [ text <| I18n.t Version ++ " " ++ version ]
+            [ Layout.link [ darkText, Layout.href helpUrl ] [ text <| I18n.t HelpLinkText  ]
             ]
         ]
     ]
 
-pageFooter : String -> List (Html Msg)
+
+pageFooter : String -> Html a
 pageFooter version =
-    [ Layout.row [ whiteBackground, darkText, Elevation.e4 ]
-        [ Layout.navigation []
-            [ Layout.title [ Options.cs "title__anchor" ]
-                [ Layout.link [ darkText, Layout.href "/" ]
-                    [ img [ src "static/img/gna-logo.svg", width 35,
-                      style [("margin-right", "10px")] ] []
-                    , Options.span [ Typo.title ] [ text <| I18n.t ApplicationName ]
+    Footer.mini [Options.css "background" "#efefef"
+                , Options.css "padding" "5px 5px 5px 30px"]
+        { left =
+            Footer.left []
+                [ Footer.links []
+                    [ Footer.linkItem [ Footer.href licenseUrl ] [ Footer.html <| text <| I18n.t MITLicense ]
+                    , Footer.linkItem [ Footer.href releasesUrl ] [ Footer.html <| text <| I18n.t Version ++ " " ++ version ]
                     ]
                 ]
-            ]
-        , Layout.spacer
-        , Layout.navigation []
-            [ Layout.link [ darkText, Layout.href licenseUrl ] [ text <| I18n.t MITLicense ]
-            , Layout.link [ darkText, Layout.href releasesUrl ] [ text <| I18n.t Version ++ " " ++ version ]
-            ]
-        ]
-    ]
-
+        , right = Footer.right [] []
+        }
 
 licenseUrl : String
 licenseUrl =
@@ -116,6 +110,9 @@ releasesUrl : String
 releasesUrl =
     "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/releases"
 
+helpUrl : String
+helpUrl =
+    "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/wiki/Help"
 
 drawer : String -> List (Html a)
 drawer softwareVersion =

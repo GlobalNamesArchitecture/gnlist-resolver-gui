@@ -9,49 +9,50 @@ import Resolver.Models exposing (ProcessedRecordCount(..), MatchType(..))
 
 
 type Translation a
-    = UploadFileSize Bytes
-    | UploadFileName FileName
-    | UploadSelection
-    | UploadStarted
-    | UploadFailed
-    | UploadSuccessful
-    | UploadContinue
-    | UploadInProgress Int
-    | UploadComplete
-    | JavaScriptFileUploadUnsupported
-    | Continue
-    | BreadcrumbUploadFile
+    = ApplicationName
+    | BreadcrumbListMatcherNames
     | BreadcrumbMapHeaders
     | BreadcrumbPickReferenceData
-    | BreadcrumbListMatcherNames
-    | TermMatchWithHeader
-    | CloseButton
-    | TermTranslationHeader String String
-    | ListMatchingHeader DataSource
-    | IngestionStatus
-    | ResolutionStatus
-    | ResolverStatus (ResolverProgress a)
-    | DownloadPartialMatching
-    | DownloadCompletedMatching
+    | BreadcrumbUploadFile
     | CSVDownloadLink
-    | XLSXDownloadLink
-    | DownloadText
     | CancelResolution
     | CancelResolutionInformation
-    | PieChartLegendText MatchType
-    | SearchPlaceholder
-    | NoErrors
+    | CloseButton
+    | Continue
     | DismissErrors
-    | RouteNotFound
-    | MITLicense
-    | Version
-    | ApplicationName
+    | DownloadCompletedMatching
+    | DownloadPartialMatching
+    | DownloadText
+    | HelpLinkText
     | HomeLinkText
-    | UnknownTranslation
-    | UploadFileDescription
-    | ResolverDescription
+    | IngestionStatus
+    | JavaScriptFileUploadUnsupported
+    | ListMatchingHeader DataSource
+    | MITLicense
     | MapDescription
+    | NoErrors
     | PickReferenceDataDescription
+    | PieChartLegendText MatchType
+    | ResolutionStatus
+    | ResolverDescription
+    | ResolverStatus (ResolverProgress a)
+    | RouteNotFound
+    | SearchPlaceholder
+    | TermMatchWithHeader
+    | TermTranslationHeader String String
+    | UnknownTranslation
+    | UploadComplete
+    | UploadContinue
+    | UploadFailed
+    | UploadFileDescription
+    | UploadFileName FileName
+    | UploadFileSize Bytes
+    | UploadInProgress Int
+    | UploadSelection
+    | UploadStarted
+    | UploadSuccessful
+    | Version
+    | XLSXDownloadLink
 
 
 t : Translation a -> String
@@ -91,7 +92,7 @@ t translation =
             "Continue"
 
         BreadcrumbUploadFile ->
-            "Upload a File"
+            "Upload a CSV File With Scientific Names"
 
         BreadcrumbMapHeaders ->
             "Map Headers"
@@ -176,6 +177,8 @@ t translation =
         ApplicationName ->
             "Scientific Names List Resolver"
 
+        HelpLinkText -> "Help"
+
         HomeLinkText ->
             "Home"
 
@@ -184,26 +187,36 @@ t translation =
 
         UploadFileDescription ->
             """
-Upload a CSV file to initiate the crossmapping process.
 
-Things to note:
+For successful resolution make sure your CSV file meets the requirements:
 
-* Use comma-delimited format, not tab-delimited
-            """
+**CSV Headers Format:** Corresponds to one of the examples
+
+**Encoding:** UTF-8
+
+**CSV field separator:** comma, semicolon, tab (, ; \\t)
+"""
 
         ResolverDescription ->
             """
-The generated file will include a mapping against the appropriate system.
+When the process is complete you will be able to download results of the name matching.
             """
 
         MapDescription ->
             """
-Select how to map data between the uploaded file and the result format.
+Green headers show terms that were recognized automatically. You can 
+manually change the mapping of terms by manual editing.
+
+There are two mutually exlusive approches. In one scientific names are given
+in one field and mapped to a **scientificName** term, or they can be
+split into **genus**, **species**, **scientificNameAuthorship** etc.
+
+Each term can happen only once and is removed from available terms list if it is already used.  White-colored headers will be ignored during comparison.
             """
 
         PickReferenceDataDescription ->
             """
-Select the appropriate system to crossreference.
+Choose a data source to match your names against
             """
 
 
