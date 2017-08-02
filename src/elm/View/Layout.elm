@@ -51,10 +51,16 @@ buttonStyles : Attribute a
 buttonStyles =
     class "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
 
+
 styledButton : List (Attribute a) -> a -> Translation b -> Html a
 styledButton options f translation =
-    button (buttonStyles :: style [("margin", "15px 0px 15px 0px")] 
-            :: onClick f :: options) [ text <| I18n.t translation ]
+    button
+        (buttonStyles
+            :: style [ ( "margin", "15px 0px 15px 0px" ) ]
+            :: onClick f
+            :: options
+        )
+        [ text <| I18n.t translation ]
 
 
 whiteBackground : Options.Property a b
@@ -69,19 +75,28 @@ darkText =
 
 pageHeader : List (Html Msg)
 pageHeader =
-    [ Layout.row [ whiteBackground, darkText, Elevation.e4 ]
+    [ Layout.row
+        [ whiteBackground
+        , darkText
+        , Elevation.e4
+        , Options.css "padding" "0px 200.5px 0px 200.5px"
+        ]
         [ Layout.navigation []
             [ Layout.title [ Options.cs "title__anchor" ]
                 [ Layout.link [ darkText, Layout.href "/" ]
-                    [ img [ src "static/img/gna-logo.svg", width 35,
-                      style [("margin-right", "10px")] ] []
+                    [ img
+                        [ src "static/img/gna-logo.svg"
+                        , width 35
+                        , style [ ( "margin-right", "10px" ) ]
+                        ]
+                        []
                     , Options.span [ Typo.title ] [ text <| I18n.t ApplicationName ]
                     ]
                 ]
             ]
         , Layout.spacer
         , Layout.navigation []
-            [ Layout.link [ darkText, Layout.href helpUrl ] [ text <| I18n.t HelpLinkText  ]
+            [ Layout.link [ darkText, Layout.href helpUrl ] [ text <| I18n.t HelpLinkText ]
             ]
         ]
     ]
@@ -89,8 +104,10 @@ pageHeader =
 
 pageFooter : String -> Html a
 pageFooter version =
-    Footer.mini [Options.css "background" "#efefef"
-                , Options.css "padding" "5px 5px 5px 30px"]
+    Footer.mini
+        [ Options.css "background" "#efefef"
+        , Options.css "padding" "5px 5px 5px 30px"
+        ]
         { left =
             Footer.left []
                 [ Footer.links []
@@ -101,6 +118,7 @@ pageFooter version =
         , right = Footer.right [] []
         }
 
+
 licenseUrl : String
 licenseUrl =
     "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/blob/master/LICENSE"
@@ -110,9 +128,11 @@ releasesUrl : String
 releasesUrl =
     "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/releases"
 
+
 helpUrl : String
 helpUrl =
     "https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/wiki/Help"
+
 
 drawer : String -> List (Html a)
 drawer softwareVersion =

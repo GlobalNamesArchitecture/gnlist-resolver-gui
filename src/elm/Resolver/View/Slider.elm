@@ -4,7 +4,8 @@ module Resolver.View.Slider
         , viewGraph
         )
 
-import Html exposing (Html, text)
+import Html exposing (Html, text, div)
+import Html.Attributes exposing (style)
 import I18n exposing (Translation(..))
 import Material.Progress as Loading
 import Widgets.Pie as Pie
@@ -72,9 +73,9 @@ chartData (ProgressMetadata matches (FailureCount fails) _ _) =
             List.filter legendValueAboveMinimumThreshold
                 [ PieChartLegend (HexColor "#080") (ExactStringMatch matches.exactString)
                 , PieChartLegend (HexColor "#0f0") (ExactCanonicalMatch matches.exactCanonical)
-                , PieChartLegend (HexColor "#8f0") (FuzzyMatch matches.fuzzy)
+                , PieChartLegend (HexColor "#ee0") (FuzzyMatch matches.fuzzy)
                 , PieChartLegend (HexColor "#8f8") (PartialMatch matches.partial)
-                , PieChartLegend (HexColor "#888") (PartialFuzzyMatch matches.partialFuzzy)
+                , PieChartLegend (HexColor "#bb0") (PartialFuzzyMatch matches.partialFuzzy)
                 , PieChartLegend (HexColor "#daa") (GenusOnlyMatch matches.genusOnly)
                 , PieChartLegend (HexColor "#000") (ResolverErrorsMatch <| toFloat fails)
                 , PieChartLegend (HexColor "#a00") (NoMatchMatch matches.noMatch)
@@ -83,4 +84,4 @@ chartData (ProgressMetadata matches (FailureCount fails) _ _) =
         if List.isEmpty results then
             renderNothing
         else
-            Pie.pie 200 <| List.map legendToDatum results
+            div [style [("margin", "20px 10px 20px 10px")]] [Pie.pie 200 <| List.map legendToDatum results]

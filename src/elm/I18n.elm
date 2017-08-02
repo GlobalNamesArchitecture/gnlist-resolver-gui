@@ -177,7 +177,8 @@ t translation =
         ApplicationName ->
             "Scientific Names List Resolver"
 
-        HelpLinkText -> "Help"
+        HelpLinkText ->
+            "Help"
 
         HomeLinkText ->
             "Home"
@@ -187,10 +188,11 @@ t translation =
 
         UploadFileDescription ->
             """
+This app compares your list of scientific names with other datasets.
+For a successful matching of names make sure that your CSV file meets the following requirements:
 
-For successful resolution make sure your CSV file meets the requirements:
-
-**CSV Headers Format:** Corresponds to one of the examples
+**CSV Headers Format:** Corresponds to one of the
+[examples](https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/wiki/Help#input-file-format)
 
 **Encoding:** UTF-8
 
@@ -204,7 +206,7 @@ When the process is complete you will be able to download results of the name ma
 
         MapDescription ->
             """
-Green headers show terms that were recognized automatically. You can 
+Green headers show terms that were recognized automatically. You can
 manually change the mapping of terms by manual editing.
 
 There are two mutually exlusive approches. In one scientific names are given
