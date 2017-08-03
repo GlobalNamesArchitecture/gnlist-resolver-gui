@@ -73,13 +73,18 @@ darkText =
     Color.text Color.primaryDark
 
 
+headerPadding : Options.Property a b
+headerPadding =
+    Options.css "padding" "0px 200.5px 0px 200.5px"
+
+
 pageHeader : List (Html Msg)
 pageHeader =
     [ Layout.row
         [ whiteBackground
         , darkText
+        , headerPadding
         , Elevation.e4
-        , Options.css "padding" "0px 200.5px 0px 200.5px"
         ]
         [ Layout.navigation []
             [ Layout.title [ Options.cs "title__anchor" ]
@@ -102,12 +107,17 @@ pageHeader =
     ]
 
 
+footerStyles : List (Options.Property a b)
+footerStyles =
+    [ Options.css "background" "#efefef"
+    , Options.css "padding" "5px 5px 5px 30px"
+    ]
+
+
 pageFooter : String -> Html a
 pageFooter version =
     Footer.mini
-        [ Options.css "background" "#efefef"
-        , Options.css "padding" "5px 5px 5px 30px"
-        ]
+        footerStyles
         { left =
             Footer.left []
                 [ Footer.links []

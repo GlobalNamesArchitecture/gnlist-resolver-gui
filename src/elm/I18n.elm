@@ -139,10 +139,10 @@ t translation =
             "Download name-matching results: "
 
         CSVDownloadLink ->
-            "CSV"
+            "CSV file"
 
         XLSXDownloadLink ->
-            "XLSX"
+            "XLSX file"
 
         DownloadText ->
             "Download"
