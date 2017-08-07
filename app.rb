@@ -21,6 +21,7 @@ require "gn_crossmap"
 require "sucker_punch"
 require "axlsx"
 require "tmpdir"
+require "damerau-levenshtein"
 
 require_relative "lib/gnlr"
 require_relative "lib/gnlr/errors"
