@@ -20,7 +20,6 @@ describe Gnlr::ExcelBuilder do
       FileUtils.mkdir(output_dir)
       FileUtils.cp(test_output, output_dir)
       subject.build
-      require "byebug"; byebug
       expect(File.exist?(excel_output)).to be true
       expect(Gnlr::FileInspector::FM.file(excel_output)).to match("Microsoft")
       FileUtils.rm_rf(output_dir)

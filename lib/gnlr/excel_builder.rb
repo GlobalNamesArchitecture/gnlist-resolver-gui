@@ -27,6 +27,9 @@ module Gnlr
       path.gsub(File.extname(path), ".xlsx")
     end
 
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
+
     def insert_rows(sheet)
       headers = { inputCanonicalForm: nil, matchedCanonicalForm: nil,
                   matchedEditDistance: nil }
@@ -43,8 +46,8 @@ module Gnlr
     end
 
     def show_edit_distance(headers, row)
-      canonicals = @differ.run(row[headers[:inputCanonicalForm]],
-                               row[headers[:matchedCanonicalForm]])
+      canonicals = @differ.run(row[headers[:inputCanonicalForm]].to_s,
+                               row[headers[:matchedCanonicalForm]].to_s)
       canonicals = canonicals.map do |c|
         rt = Axlsx::RichText.new
         split_by_tags(c).each do |e|
@@ -65,7 +68,7 @@ module Gnlr
     def add_style(element)
       case element.name
       when "text"
-        [element.text, {b: true}]
+        [element.text, { b: true }]
       when "subst"
         [element.children.first.text, { b: true, color: "00AA00" }]
       when "del"
@@ -75,5 +78,7 @@ module Gnlr
         [element.children.first.text, { b: true, color: "00AA00" }]
       end
     end
+
+    # rubocop:enable all
   end
 end
