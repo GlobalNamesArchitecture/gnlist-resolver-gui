@@ -16,14 +16,14 @@ describe Gnlr::FileInspector do
       it "detects latin1 encoding" do
         file = open(latin1)
         res = subject.inspect(file)
-        expect(res).to eq(is_csv: true, col_sep: ",",
+        expect(res).to eq(is_csv: true, col_sep: "\t",
                           encoding: "ISO-8859-1:UTF-8")
       end
 
       it "detects utf16 encoding" do
         file = open(utf16)
         res = subject.inspect(file)
-        expect(res).to eq(is_csv: true, col_sep: ",",
+        expect(res).to eq(is_csv: true, col_sep: "\t",
                           encoding: "UTF-16:UTF-8")
       end
     end
