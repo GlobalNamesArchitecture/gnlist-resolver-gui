@@ -55,8 +55,11 @@ module Gnlr
         f = open(file.path, encoding: enc)
         line = f.gets.strip
         f.close
-        res = [";", ",", "\t"].map { |s| [line.count(s), s] }.sort.last
-        res.first.zero? ? "," : res.last
+        res = [[";", 1], [",", 0], ["\t", 2]].map do |s, weight|
+          [line.count(s), weight, s]
+        end
+        res = res.sort.last
+        res.first.zero? ? "\t" : res.last
       end
     end
   end

@@ -3,6 +3,8 @@
 module Gnlr
   # Gnlr::Uploader saves scinames list file on a local machine
   class Uploader
+    attr_reader :params
+
     def initialize(params)
       @params = OpenStruct.new(params)
       @list_file = nil
@@ -10,6 +12,7 @@ module Gnlr
 
     def save_list_file
       res = FileInspector.inspect(@params.tempfile)
+      puts res
       raise(Gnlr::FileTypeError, "Not a CSV file") unless res[:is_csv]
       token = Gnlr.token
       copy_file(token, res[:encoding])

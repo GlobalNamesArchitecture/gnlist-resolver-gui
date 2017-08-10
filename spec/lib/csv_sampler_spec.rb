@@ -7,7 +7,7 @@ describe Gnlr::CsvSampler do
     it "creates a sample of rows and headers" do
       res = subject.sample(file, col_sep)
       expect(res).to be_kind_of Hash
-      expect(res[:headers]).to eq %w(ID scientificName)
+      expect(res[:headers]).to eq %w[ID scientificName]
       expect(res[:rows].first.size).to be 2
     end
   end
