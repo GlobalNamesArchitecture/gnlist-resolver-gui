@@ -1,7 +1,7 @@
 module FileUpload.Update exposing (update, subscriptions)
 
 import Routing exposing (Route(Terms), navigateTo)
-import FileUpload.Models exposing (Upload, File, UploadProgress(..), Loaded(..), Total(..), UploadFailure(..), Token(..), jsonFileToFile)
+import FileUpload.Models exposing (Upload, UploadProgress(..), Loaded(..), Total(..), UploadFailure(..), Token(..), jsonFileToFile)
 import FileUpload.Messages exposing (Msg(..))
 import FileUpload.Ports exposing (..)
 

@@ -82,7 +82,7 @@ row model ( pos, txt, icon ) =
 
 
 viewCrumb : CellPosition -> CrumbActivity -> String -> String -> List (Grid.Cell msg)
-viewCrumb cellPosition crumbActivity txt icon =
+viewCrumb cellPosition crumbActivity txt _ =
     let
         additionalOptions =
             cellPositionOptions ++ activeOptions

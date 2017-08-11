@@ -3,7 +3,8 @@
 module Gnlr
   # Gnlr::ExcelBuilder converts CSV into an Excel file
   class ExcelBuilder
-    def initialize(output_path)
+    def initialize(list_matcher, output_path)
+      @list_matcher = list_matcher
       @file = File.split(output_path).last
       @file_path = output_path
       @excel_path = excel_path(output_path)
@@ -27,28 +28,46 @@ module Gnlr
       path.gsub(File.extname(path), ".xlsx")
     end
 
-    # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/AbcSize
-
     def insert_rows(sheet)
       headers = { inputCanonicalForm: nil, matchedCanonicalForm: nil,
                   matchedEditDistance: nil }
-      CSV.open(@file_path, col_sep: "\t").each_with_index do |l|
-        if headers[:inputCanonicalForm].nil?
-          headers.keys.each { |k| headers[k] = l.index(k.to_s) }
-        end
-
-        if l[headers[:matchedEditDistance]].to_i.positive?
-          l = show_edit_distance(headers, l)
-        end
-        sheet.add_row(l)
+      percent = @list_matcher.stats["total_records"] / 100
+      CSV.open(@file_path, col_sep: "\t").each_with_index do |l, i|
+        add_row(headers, sheet, l, i, percent)
       end
+      update_stats(@list_matcher.stats["total_records"])
+    end
+
+    def add_row(headers, sheet, row, i, percent)
+      if headers[:inputCanonicalForm].nil?
+        headers.keys.each { |k| headers[k] = row.index(k.to_s) }
+      end
+      update_stats(i) if (i % percent).zero?
+      row = handle_edit_distance(headers, row)
+      sheet.add_row(row)
+    end
+
+    def handle_edit_distance(headers, row)
+      return row unless row[headers[:matchedEditDistance]].to_i.positive?
+      show_edit_distance(headers, row)
+    end
+
+    def update_stats(i)
+      @list_matcher.stats["excel_rows"] = i
+      @list_matcher.save!
     end
 
     def show_edit_distance(headers, row)
       canonicals = @differ.run(row[headers[:inputCanonicalForm]].to_s,
                                row[headers[:matchedCanonicalForm]].to_s)
-      canonicals = canonicals.map do |c|
+      canonicals = update_canonicals(canonicals)
+      row[headers[:inputCanonicalForm]] = canonicals[0]
+      row[headers[:matchedCanonicalForm]] = canonicals[1]
+      row
+    end
+
+    def update_canonicals(canonicals)
+      canonicals.map do |c|
         rt = Axlsx::RichText.new
         split_by_tags(c).each do |e|
           text, markup = add_style(e)
@@ -56,14 +75,13 @@ module Gnlr
         end
         rt
       end
-      row[headers[:inputCanonicalForm]] = canonicals[0]
-      row[headers[:matchedCanonicalForm]] = canonicals[1]
-      row
     end
 
     def split_by_tags(str)
       Nokogiri::XML("<root>#{str}</root>").root.children
     end
+
+    # rubocop:disable Metrics/MethodLength
 
     def add_style(element)
       case element.name

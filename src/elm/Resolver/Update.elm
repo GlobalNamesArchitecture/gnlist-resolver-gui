@@ -1,6 +1,6 @@
 module Resolver.Update exposing (subscriptions, update)
 
-import Time exposing (Time, millisecond)
+import Time exposing (millisecond)
 import Resolver.Models exposing (..)
 import Resolver.Messages exposing (Msg(..))
 import Resolver.Api exposing (queryResolutionProgress, sendStopResolution)

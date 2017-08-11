@@ -67,7 +67,7 @@ legendValueAboveMinimumThreshold (PieChartLegend _ value) =
 
 
 chartData : ProgressMetadata -> Html a
-chartData (ProgressMetadata matches (FailureCount fails) _ _) =
+chartData (ProgressMetadata matches (FailureCount fails) _ _ _) =
     let
         results =
             List.filter legendValueAboveMinimumThreshold
@@ -84,4 +84,4 @@ chartData (ProgressMetadata matches (FailureCount fails) _ _) =
         if List.isEmpty results then
             renderNothing
         else
-            div [style [("margin", "20px 10px 20px 10px")]] [Pie.pie 200 <| List.map legendToDatum results]
+            div [ style [ ( "margin", "20px 10px 20px 10px" ) ] ] [ Pie.pie 200 <| List.map legendToDatum results ]

@@ -12,4 +12,5 @@ type Msg
     | ResolutionProgress (Result Http.Error ( Stats, Errors ))
     | SendStopResolution
     | StopResolution (Result Http.Error ())
+      -- | QueryExcelBuildingProgress (Result Http.Error (Stats, Errors))
     | EmptyErrors

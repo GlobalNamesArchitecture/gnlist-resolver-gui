@@ -2,7 +2,6 @@ module Resolver.View exposing (view)
 
 import Html exposing (..)
 import Html.Attributes exposing (alt, href, style)
-import Html.Events exposing (onClick)
 import I18n exposing (Translation(..))
 import Material.Card as Card
 import Material.Elevation as Elevation
@@ -16,10 +15,17 @@ import Resolver.Models
         , Stats(..)
         , Ingestion
         , Resolution
-        , Matches
+        , ProgressMetadata(..)
+        , TotalRecordCount(..)
+        , ExcelRowsCount(..)
         )
 import Resolver.Messages exposing (Msg(..))
-import Resolver.Helper exposing (ResolverProgress(..), ingestionResolverProgress, resolutionResolverProgress)
+import Resolver.Helper
+    exposing
+        ( ResolverProgress(..)
+        , ingestionResolverProgress
+        , resolutionResolverProgress
+        )
 import Resolver.View.Slider exposing (buildSlider, viewGraph)
 
 
@@ -69,18 +75,21 @@ viewResolutionStage resolverProgress =
 viewDownload : Resolver -> Terms -> Html Msg
 viewDownload ({ stats } as resolver) terms =
     case stats of
-        Done _ _ _ _ ->
-            downloadOutputLinks terms resolver
-
         Resolving _ _ _ ->
             cancelResolution
+
+        BuildingExcel _ _ _ _ ->
+            downloadOutputLinks terms resolver
+
+        Done _ _ _ _ ->
+            downloadOutputLinks terms resolver
 
         _ ->
             div [] []
 
 
 downloadOutputLinks : Terms -> Resolver -> Html Msg
-downloadOutputLinks terms { stopTrigger } =
+downloadOutputLinks terms { stopTrigger, stats } =
     let
         msg =
             if stopTrigger then
@@ -90,9 +99,6 @@ downloadOutputLinks terms { stopTrigger } =
 
         csvOutput =
             terms.output
-
-        excelOutput =
-            String.dropRight 3 terms.output ++ "xlsx"
     in
         Card.view
             [ Options.css "width" "550px"
@@ -111,15 +117,48 @@ downloadOutputLinks terms { stopTrigger } =
                         ]
                     ]
                     [ text <| I18n.t CSVDownloadLink ]
-                , text " "
-                , a
+                , xlsxView terms stats
+                ]
+            ]
+
+
+xlsxView : Terms -> Stats -> Html Msg
+xlsxView terms stats =
+    let
+        excelOutput =
+            String.dropRight 3 terms.output ++ "xlsx"
+    in
+        case stats of
+            BuildingExcel m _ _ _ ->
+                excelProgress m
+
+            _ ->
+                a
                     [ href excelOutput
                     , alt <| I18n.t DownloadText ++ " " ++ I18n.t XLSXDownloadLink
                     , style [ ( "color", "white" ), ( "font-size", "1.2em" ) ]
                     ]
                     [ text <| I18n.t XLSXDownloadLink ]
-                ]
+
+
+excelProgress : ProgressMetadata -> Html Msg
+excelProgress (ProgressMetadata _ _ total rows _) =
+    span
+        [ style
+            [ ( "color", "white" )
+            , ( "font-size", "1.2em" )
             ]
+        ]
+        [ text <|
+            "XLSX building... ("
+                ++ (toString <| excelPercentage total rows)
+                ++ "%)"
+        ]
+
+
+excelPercentage : TotalRecordCount -> ExcelRowsCount -> Int
+excelPercentage (TotalRecordCount total) (ExcelRowsCount rows) =
+    truncate <| toFloat rows / toFloat total * 100
 
 
 cancelResolution : Html Msg

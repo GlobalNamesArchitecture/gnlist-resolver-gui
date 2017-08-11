@@ -29,7 +29,7 @@ module Gnlr
            resolution_stop ingestion_span resolution_span].each do |t|
           stats[t] = stats[t].to_f unless stats[t].nil?
         end
-        list_matcher.update(stats: stats)
+        list_matcher.update(stats: stats.merge(excel_rows: 0))
         "STOP" if ListMatcher.find_by_token(token).stop_trigger
       end
     end
@@ -49,7 +49,7 @@ module Gnlr
 
     def make_excel_output(token)
       list_matcher, opts = params(token)
-      Gnlr::ExcelBuilder.new(opts[:output]).build
+      Gnlr::ExcelBuilder.new(list_matcher, opts[:output]).build
       stats = list_matcher.stats.merge(status: "done")
       list_matcher.update(stats: stats)
     end

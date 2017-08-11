@@ -42,7 +42,12 @@ statusToStatsDecoder status =
 
 progressMetadataDecoder : Decoder ProgressMetadata
 progressMetadataDecoder =
-    map4 ProgressMetadata matches failureCountDecoder totalRecordCountDecoder lastBatchesTimeDecoder
+    map5 ProgressMetadata
+        matches
+        failureCountDecoder
+        totalRecordCountDecoder
+        excelRowCountDecoder
+        lastBatchesTimeDecoder
 
 
 failureCountDecoder : Decoder FailureCount
@@ -53,6 +58,11 @@ failureCountDecoder =
 totalRecordCountDecoder : Decoder TotalRecordCount
 totalRecordCountDecoder =
     map TotalRecordCount (at [ "total_records" ] int)
+
+
+excelRowCountDecoder : Decoder ExcelRowsCount
+excelRowCountDecoder =
+    map ExcelRowsCount (at [ "excel_rows" ] int)
 
 
 ingestionDecoder : Decoder Ingestion

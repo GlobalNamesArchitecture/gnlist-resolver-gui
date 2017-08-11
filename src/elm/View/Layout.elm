@@ -6,7 +6,7 @@ import Material.Typography as Typo
 import Material.Elevation as Elevation
 import Material.Footer as Footer
 import Material.Color as Color
-import Html exposing (Html, Attribute, h2, h3, text, button, img)
+import Html exposing (Html, Attribute, h2, text, button, img)
 import Html.Attributes exposing (class, src, width, style)
 import Html.Events exposing (onClick)
 import Widgets.BreadCrumbs as Breadcrumbs

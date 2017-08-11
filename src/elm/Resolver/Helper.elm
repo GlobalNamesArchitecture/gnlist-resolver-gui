@@ -2,13 +2,14 @@ module Resolver.Helper
     exposing
         ( Input
         , ResolverProgress(..)
+        , ExcelProgress(..)
         , resolutionResolverProgress
         , ingestionResolverProgress
         , resolutionInput
         , ingestionInput
         )
 
-import Resolver.Models exposing (Resolver, Resolution, Ingestion, Stats(..), ProgressMetadata(..), TotalRecordCount(..), ProcessedRecordCount(..))
+import Resolver.Models exposing (Resolver, Resolution, Ingestion, Stats(..), ProgressMetadata(..), TotalRecordCount(..), ExcelRowsCount(..), ProcessedRecordCount(..))
 import TimeDuration.Model exposing (..)
 
 
@@ -54,7 +55,7 @@ estimate total processed velocity =
 
 
 ingestionInput : ProgressMetadata -> Ingestion -> Maybe Resolution -> Input
-ingestionInput (ProgressMetadata _ _ totalRecords _) ingestion mresolution =
+ingestionInput (ProgressMetadata _ _ totalRecords _ _) ingestion mresolution =
     let
         processed =
             ingestion.ingestedRecords
@@ -74,7 +75,7 @@ ingestionInput (ProgressMetadata _ _ totalRecords _) ingestion mresolution =
 
 
 resolutionInput : ProgressMetadata -> Resolution -> Maybe Float -> Input
-resolutionInput (ProgressMetadata _ _ totalRecords lastBatchesTime) resolution resolutionStop =
+resolutionInput (ProgressMetadata _ _ totalRecords _ lastBatchesTime) resolution resolutionStop =
     let
         processed =
             resolution.resolvedRecords
@@ -122,6 +123,11 @@ type ResolverProgress a
     | Complete Input
 
 
+type ExcelProgress a
+    = ExcelInProgress Input
+    | ExcelDone Input
+
+
 ingestionResolverProgress : Resolver -> ResolverProgress Ingestion
 ingestionResolverProgress { stats } =
     case stats of
@@ -165,8 +171,8 @@ resolutionResolverProgress { stats } =
         Resolving metadata _ resolution ->
             InProgress <| resolutionInput metadata resolution Nothing
 
-        BuildingExcel metadata _ resolution stop ->
-            Complete <| resolutionInput metadata resolution (Just stop)
+        BuildingExcel metadata ingestion _ _ ->
+            Complete <| ingestionInput metadata ingestion Nothing
 
         Done metadata _ resolution stop ->
             Complete <| resolutionInput metadata resolution (Just stop)

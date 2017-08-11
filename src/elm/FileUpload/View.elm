@@ -15,7 +15,6 @@ import Html.Attributes
         , classList
         )
 import Html.Events exposing (on, onClick)
-import Material.Icon as Icon
 import Material.Card as Card
 import Material.Color as Color
 import Json.Decode as JD

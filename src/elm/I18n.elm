@@ -4,7 +4,7 @@ import Filesize
 import TimeDuration.Model exposing (..)
 import FileUpload.Models exposing (Bytes(..), FileName(..))
 import Target.Models exposing (DataSource)
-import Resolver.Helper exposing (ResolverProgress(..), Input)
+import Resolver.Helper exposing (ResolverProgress(..), ExcelProgress(..), Input)
 import Resolver.Models exposing (ProcessedRecordCount(..), MatchType(..))
 
 
@@ -23,6 +23,7 @@ type Translation a
     | DownloadCompletedMatching
     | DownloadPartialMatching
     | DownloadText
+    | ExcelBuildingStatus (ExcelProgress a)
     | HelpLinkText
     | HomeLinkText
     | IngestionStatus
@@ -86,7 +87,8 @@ t translation =
             "Progress: " ++ toString percentageComplete ++ "%"
 
         JavaScriptFileUploadUnsupported ->
-            "JavaScript-based file upload is not supported; please switch to a more modern browser."
+            "JavaScript-based file upload is not supported; "
+                ++ "please switch to a more modern browser."
 
         Continue ->
             "Continue"
@@ -137,6 +139,9 @@ t translation =
 
         DownloadCompletedMatching ->
             "Download name-matching results: "
+
+        ExcelBuildingStatus _ ->
+            "Excel Building"
 
         CSVDownloadLink ->
             "CSV file"
@@ -189,7 +194,8 @@ t translation =
         UploadFileDescription ->
             """
 This app compares your list of scientific names with other datasets.
-For a successful matching of names make sure that your CSV file meets the following requirements:
+For a successful matching of names make sure that your CSV file meets the
+following requirements:
 
 **CSV Headers Format:** Corresponds to one of the
 [examples](https://github.com/GlobalNamesArchitecture/gnlist-resolver-gui/wiki/Help#input-file-format)
@@ -201,7 +207,8 @@ For a successful matching of names make sure that your CSV file meets the follow
 
         ResolverDescription ->
             """
-When the process is complete you will be able to download results of the name matching.
+When the process is complete you will be able to download results of the
+name matching.
             """
 
         MapDescription ->
@@ -213,7 +220,8 @@ There are two mutually exlusive approches. In one scientific names are given
 in one field and mapped to a **scientificName** term, or they can be
 split into **genus**, **species**, **scientificNameAuthorship** etc.
 
-Each term can happen only once and is removed from available terms list if it is already used.  White-colored headers will be ignored during comparison.
+Each term can happen only once and is removed from available terms list if
+it is already used.  White-colored headers will be ignored during comparison.
             """
 
         PickReferenceDataDescription ->

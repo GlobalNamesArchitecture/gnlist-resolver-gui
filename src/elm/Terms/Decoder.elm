@@ -7,7 +7,6 @@ import Terms.Models
         , Term
         , Header
         , Row
-        , Uniqueness
         , sientificNameTerms
         , combinedTerms
         )

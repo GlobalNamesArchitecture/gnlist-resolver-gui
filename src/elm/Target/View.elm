@@ -16,7 +16,7 @@ import Json.Decode as J
 import Maybe exposing (withDefault)
 import I18n exposing (Translation(..))
 import View.Layout exposing (contentWrapper, styledButton)
-import Target.Models exposing (Target, DataSources, DataSource)
+import Target.Models exposing (Target, DataSource)
 import Target.Messages exposing (Msg(..))
 
 

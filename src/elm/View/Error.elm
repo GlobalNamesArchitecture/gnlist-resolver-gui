@@ -24,7 +24,7 @@ viewErrors : List Error -> Html Msg
 viewErrors errors =
     let
         errorList =
-            (List.map viewError errors) ++ [ errorButton ]
+            List.map viewError errors ++ [ errorButton ]
     in
         div [ class "errors" ] errorList
 
