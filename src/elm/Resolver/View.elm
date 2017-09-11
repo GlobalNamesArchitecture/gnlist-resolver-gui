@@ -13,6 +13,7 @@ import Resolver.Models
     exposing
         ( Resolver
         , Stats(..)
+        , StopTriggerStatus(..)
         , Ingestion
         , Resolution
         , ProgressMetadata(..)
@@ -73,10 +74,10 @@ viewResolutionStage resolverProgress =
 
 
 viewDownload : Resolver -> Terms -> Html Msg
-viewDownload ({ stats } as resolver) terms =
+viewDownload ({ stats, stopTrigger } as resolver) terms =
     case stats of
         Resolving _ _ _ ->
-            cancelResolution
+            cancelResolution stopTrigger
 
         BuildingExcel _ _ _ _ ->
             downloadOutputLinks terms resolver
@@ -92,10 +93,12 @@ downloadOutputLinks : Terms -> Resolver -> Html Msg
 downloadOutputLinks terms { stopTrigger, stats } =
     let
         msg =
-            if stopTrigger then
-                I18n.t DownloadPartialMatching
-            else
-                I18n.t DownloadCompletedMatching
+            case stopTrigger of
+                Stopped ->
+                    I18n.t DownloadCompletedMatching
+
+                _ ->
+                    I18n.t DownloadPartialMatching
 
         csvOutput =
             terms.output
@@ -161,10 +164,15 @@ excelPercentage (TotalRecordCount total) (ExcelRowsCount rows) =
     truncate <| toFloat rows / toFloat total * 100
 
 
-cancelResolution : Html Msg
-cancelResolution =
-    div
-        []
-        [ styledButton [] SendStopResolution CancelResolution
-        , text <| " (" ++ I18n.t CancelResolutionInformation ++ ")"
-        ]
+cancelResolution : StopTriggerStatus -> Html Msg
+cancelResolution stopTriggerStatus =
+    case stopTriggerStatus of
+        Updating ->
+            div [] [ text <| "Canceling..." ]
+
+        _ ->
+            div
+                []
+                [ styledButton [] SendStopResolution CancelResolution
+                , text <| " (" ++ I18n.t CancelResolutionInformation ++ ")"
+                ]

@@ -40,13 +40,13 @@ update msg resolver token =
             ( resolver, Cmd.none )
 
         SendStopResolution ->
-            ( resolver, sendStopResolution token )
+            ( { resolver | stopTrigger = Updating }, sendStopResolution token )
 
         StopResolution (Ok _) ->
-            ( { resolver | stopTrigger = True }, Cmd.none )
+            ( { resolver | stopTrigger = Stopped }, Cmd.none )
 
         StopResolution (Err _) ->
-            ( resolver, Cmd.none )
+            ( { resolver | stopTrigger = Started }, Cmd.none )
 
         EmptyErrors ->
             ( { resolver | errors = Nothing }, Cmd.none )

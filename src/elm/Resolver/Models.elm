@@ -6,10 +6,16 @@ import TimeDuration.Model exposing (Seconds)
 
 
 type alias Resolver =
-    { stopTrigger : Bool
+    { stopTrigger : StopTriggerStatus
     , stats : Stats
     , errors : Errors
     }
+
+
+type StopTriggerStatus
+    = Started
+    | Stopped
+    | Updating
 
 
 type FailureCount
@@ -143,7 +149,7 @@ type GenusOnly
 
 initResolver : Resolver
 initResolver =
-    Resolver False NoStatsReceived Nothing
+    Resolver Started NoStatsReceived Nothing
 
 
 matchTypeValueToFloat : MatchType -> Float
