@@ -1,12 +1,13 @@
-module Update exposing (update)
+module Update exposing (init, update)
 
 import Material
 import Messages exposing (Msg(..))
-import Models exposing (Model, currentToken)
+import Models exposing (Model, Flags, currentToken, initModel)
 import Navigation exposing (Location)
 import Routing exposing (Route(..))
 import FileUpload.Messages as FUM
 import FileUpload.Update as FUU
+import FileUpload.Ports as FUP
 import Terms.Messages as TM
 import Terms.Update as TU
 import Terms.Helper as TH
@@ -16,7 +17,7 @@ import Target.Helper as DSH
 import Resolver.Messages as RM
 import Resolver.Update as RU
 import Resolver.Api as RA
-import Data.Token as Token
+import Data.Token as Token exposing (Token)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -59,11 +60,8 @@ updateRoute location model =
 routingCommand : Model -> Route -> Cmd Msg
 routingCommand model route =
     case route of
-        Target _ ->
-            Cmd.map TargetMsg <| DSH.getDataSources model.resolverUrl
-
         Resolver token ->
-            Cmd.map ResolverMsg <| RA.startResolution token
+            Cmd.map ResolverMsg <| RA.queryResolutionProgress token
 
         Terms token ->
             if List.isEmpty model.terms.headers then
@@ -128,3 +126,21 @@ emptyErrors model =
             .resolver <| Tuple.first (updateResolver RM.EmptyErrors model)
     in
         ( { model | upload = upload, resolver = resolver }, Cmd.none )
+
+
+init : Flags -> Location -> ( Model, Cmd Msg )
+init flags location =
+    let
+        currentRoute =
+            Routing.parseLocation location
+
+        model =
+            initModel flags currentRoute
+    in
+        ( model
+        , Cmd.batch
+            [ FUP.isUploadSupported ()
+            , routingCommand model currentRoute
+            , Cmd.map TargetMsg <| DSH.getDataSources model.resolverUrl
+            ]
+        )

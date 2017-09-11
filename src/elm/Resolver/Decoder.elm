@@ -9,7 +9,20 @@ import TimeDuration.Model exposing (..)
 
 statsAndErrorsDecoder : Decoder ( Stats, Errors )
 statsAndErrorsDecoder =
+    oneOf
+        [ notStartedDecoder
+        , existingStatsAndErrorsDecoder
+        ]
+
+
+existingStatsAndErrorsDecoder : Decoder ( Stats, Errors )
+existingStatsAndErrorsDecoder =
     map2 (,) statsDecoder errors
+
+
+notStartedDecoder : Decoder ( Stats, Errors )
+notStartedDecoder =
+    null ( NotStarted, Nothing )
 
 
 statsDecoder : Decoder Stats

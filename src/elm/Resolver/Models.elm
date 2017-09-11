@@ -51,6 +51,9 @@ metadataFromStats stats =
         NoStatsReceived ->
             Nothing
 
+        NotStarted ->
+            Nothing
+
         PendingResolution m ->
             Just m
 
@@ -69,6 +72,7 @@ metadataFromStats stats =
 
 type Stats
     = Unknown
+    | NotStarted
     | NoStatsReceived
     | PendingResolution ProgressMetadata
     | Ingesting ProgressMetadata Ingestion

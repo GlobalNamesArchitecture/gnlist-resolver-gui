@@ -3,7 +3,7 @@ module Resolver.Update exposing (subscriptions, update)
 import Time exposing (millisecond)
 import Resolver.Models exposing (..)
 import Resolver.Messages exposing (Msg(..))
-import Resolver.Api exposing (queryResolutionProgress, sendStopResolution)
+import Resolver.Api exposing (queryResolutionProgress, startResolution, sendStopResolution)
 import Data.Token exposing (Token)
 
 
@@ -34,7 +34,7 @@ update msg resolver token =
                 | stats = stats
                 , errors = errors
               }
-            , Cmd.none
+            , resolutionProgressCmd token stats
             )
 
         ResolutionProgress (Err _) ->
@@ -51,3 +51,13 @@ update msg resolver token =
 
         EmptyErrors ->
             ( { resolver | errors = Nothing }, Cmd.none )
+
+
+resolutionProgressCmd : Token -> Stats -> Cmd Msg
+resolutionProgressCmd token stats =
+    case stats of
+        NotStarted ->
+            startResolution token
+
+        _ ->
+            Cmd.none

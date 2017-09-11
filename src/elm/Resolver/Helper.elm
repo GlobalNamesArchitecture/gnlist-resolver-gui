@@ -137,6 +137,9 @@ ingestionResolverProgress { stats } =
         NoStatsReceived ->
             Pending
 
+        NotStarted ->
+            Pending
+
         PendingResolution _ ->
             Pending
 
@@ -160,6 +163,9 @@ resolutionResolverProgress { stats } =
             Pending
 
         NoStatsReceived ->
+            Pending
+
+        NotStarted ->
             Pending
 
         PendingResolution _ ->
