@@ -12,6 +12,7 @@ import Terms.View as Terms
 import Target.View as Target
 import Target.Helper as Target
 import Resolver.View as Resolver
+import Data.Token exposing (Token)
 
 
 view : Model -> Html Msg
@@ -48,13 +49,13 @@ fileUploadView model =
     Html.map FileUploadMsg <| FileUpload.view model.upload
 
 
-termsView : Model -> Routing.Token -> Html Msg
+termsView : Model -> Token -> Html Msg
 termsView model token =
     Html.map TermsMsg <|
         Terms.view model.target.all model.terms token
 
 
-dataSourceView : Model -> Routing.Token -> Html Msg
+dataSourceView : Model -> Token -> Html Msg
 dataSourceView model token =
     Html.map TargetMsg <|
         Target.view model.target token

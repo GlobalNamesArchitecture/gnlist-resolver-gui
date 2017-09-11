@@ -8,6 +8,7 @@ import Terms.Messages exposing (Msg(..))
 import Terms.Models exposing (Terms, Term, Header)
 import Terms.Decoder exposing (workflow, normalize)
 import Terms.Encoder as TE
+import Data.Token as Token exposing (Token)
 
 
 update : Msg -> Terms -> ( Terms, Cmd Msg )
@@ -103,7 +104,7 @@ prepareTerm term =
         Just term
 
 
-saveTerms : String -> List String -> Cmd Msg
+saveTerms : Token -> List String -> Cmd Msg
 saveTerms token terms =
     let
         url =

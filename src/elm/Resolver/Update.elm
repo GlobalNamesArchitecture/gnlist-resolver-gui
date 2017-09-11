@@ -4,6 +4,7 @@ import Time exposing (millisecond)
 import Resolver.Models exposing (..)
 import Resolver.Messages exposing (Msg(..))
 import Resolver.Api exposing (queryResolutionProgress, sendStopResolution)
+import Data.Token exposing (Token)
 
 
 subscriptions : Resolver -> Sub Msg
@@ -16,7 +17,7 @@ subscriptions { stats } =
             Time.every (millisecond * 1000) QueryResolutionProgress
 
 
-update : Msg -> Resolver -> String -> ( Resolver, Cmd Msg )
+update : Msg -> Resolver -> Token -> ( Resolver, Cmd Msg )
 update msg resolver token =
     case msg of
         LaunchResolution (Ok _) ->

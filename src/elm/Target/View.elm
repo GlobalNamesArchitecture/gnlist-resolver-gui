@@ -18,9 +18,10 @@ import I18n exposing (Translation(..))
 import View.Layout exposing (contentWrapper, styledButton)
 import Target.Models exposing (Target, DataSource)
 import Target.Messages exposing (Msg(..))
+import Data.Token exposing (Token)
 
 
-view : Target -> String -> Html Msg
+view : Target -> Token -> Html Msg
 view target token =
     contentWrapper BreadcrumbPickReferenceData
         PickReferenceDataDescription
@@ -43,7 +44,7 @@ view target token =
         ]
 
 
-continueButton : String -> Html Msg
+continueButton : Token -> Html Msg
 continueButton token =
     styledButton [] (ToResolver token) Continue
 
@@ -58,7 +59,7 @@ onInput msg =
     on "input" <| J.andThen (\t -> J.succeed <| msg (normalize t)) targetValue
 
 
-selectTarget : Target -> String -> Html Msg
+selectTarget : Target -> Token -> Html Msg
 selectTarget target token =
     let
         match t =
@@ -80,7 +81,7 @@ selectTarget target token =
             |> div []
 
 
-dataSourceRender : String -> Int -> DataSource -> Html Msg
+dataSourceRender : Token -> Int -> DataSource -> Html Msg
 dataSourceRender token current dsi =
     div []
         [ input

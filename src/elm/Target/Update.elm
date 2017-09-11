@@ -7,6 +7,7 @@ import Target.Models exposing (Target)
 import Target.Messages exposing (Msg(..))
 import Target.Helper as HDS
 import Target.Encoder as TE
+import Data.Token as Token exposing (Token)
 
 
 update : Msg -> Target -> ( Target, Cmd Msg )
@@ -36,7 +37,7 @@ update msg ds =
             ( { ds | filter = f }, Cmd.none )
 
 
-saveTarget : String -> Int -> Cmd Msg
+saveTarget : Token -> Int -> Cmd Msg
 saveTarget token targetId =
     let
         url =

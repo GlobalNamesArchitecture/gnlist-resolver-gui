@@ -11,29 +11,30 @@ import Json.Decode exposing (null)
 import Resolver.Messages exposing (Msg(..))
 import Resolver.Encoder as RE
 import Resolver.Decoder exposing (statsAndErrorsDecoder)
+import Data.Token as Token exposing (Token)
 
 
-queryResolutionProgress : String -> Cmd Msg
+queryResolutionProgress : Token -> Cmd Msg
 queryResolutionProgress token =
     let
         url =
-            "/stats/" ++ token
+            "/stats/" ++ Token.toString token
     in
         Http.send ResolutionProgress
             (Http.get url statsAndErrorsDecoder)
 
 
-startResolution : String -> Cmd Msg
+startResolution : Token -> Cmd Msg
 startResolution token =
     let
         url =
-            "/resolver/" ++ token
+            "/resolver/" ++ Token.toString token
     in
         Http.send LaunchResolution
             (Http.get url (null ()))
 
 
-sendStopResolution : String -> Cmd Msg
+sendStopResolution : Token -> Cmd Msg
 sendStopResolution token =
     let
         url =

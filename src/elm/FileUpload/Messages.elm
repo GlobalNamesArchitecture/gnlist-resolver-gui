@@ -1,6 +1,7 @@
 module FileUpload.Messages exposing (Msg(..))
 
 import FileUpload.Models exposing (JsonFile)
+import Data.Token exposing (Token)
 
 
 type Msg
@@ -13,4 +14,4 @@ type Msg
     | FileUploadStarted ()
     | FileUploadComplete ()
     | FileUploadFailed String
-    | FileUploadSuccess String
+    | FileUploadSuccess Token

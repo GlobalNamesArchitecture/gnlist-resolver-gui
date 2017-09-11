@@ -7,6 +7,7 @@ import Terms.Models exposing (Terms, initTerms)
 import Target.Models exposing (Target, initTarget)
 import Resolver.Models exposing (Resolver, initResolver)
 import Errors exposing (Errors)
+import Data.Token exposing (Token)
 
 
 type alias Model =
@@ -45,7 +46,7 @@ initModel flags route =
         Material.model
 
 
-currentToken : Model -> Maybe String
+currentToken : Model -> Maybe Token
 currentToken { route } =
     case route of
         FileUpload ->

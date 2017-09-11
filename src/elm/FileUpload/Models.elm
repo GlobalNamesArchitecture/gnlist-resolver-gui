@@ -1,6 +1,7 @@
 module FileUpload.Models exposing (..)
 
 import Errors exposing (Errors)
+import Data.Token exposing (Token)
 
 
 type Loaded
@@ -9,10 +10,6 @@ type Loaded
 
 type Total
     = Total Float
-
-
-type Token
-    = Token String
 
 
 type Bytes
@@ -77,16 +74,6 @@ progressToCompletionPercent progress =
     case progress of
         Loading (Loaded loaded) (Total total) ->
             Just <| round <| (loaded / total) * 100
-
-        _ ->
-            Nothing
-
-
-uploadToken : Upload -> Maybe String
-uploadToken upload =
-    case upload.progress of
-        Succeeded (Token token) ->
-            Just token
 
         _ ->
             Nothing

@@ -21,8 +21,9 @@ import Json.Decode as JD
 import Material.Progress as Loading
 import View.Layout exposing (contentWrapper, buttonStyles)
 import I18n exposing (Translation(..))
-import FileUpload.Models exposing (Upload, File, Token(..), Bytes(..), UploadProgress(..), progressToCompletionPercent)
+import FileUpload.Models exposing (Upload, File, Bytes(..), UploadProgress(..), progressToCompletionPercent)
 import FileUpload.Messages exposing (Msg(..))
+import Data.Token exposing (Token)
 
 
 view : Upload -> Html Msg

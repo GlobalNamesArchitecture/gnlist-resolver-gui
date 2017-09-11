@@ -1,11 +1,8 @@
-module Routing exposing (Token, Route(..), navigateTo, parseLocation)
+module Routing exposing (Route(..), navigateTo, parseLocation)
 
 import Navigation exposing (Location, newUrl)
 import UrlParser exposing (..)
-
-
-type alias Token =
-    String
+import Data.Token as Token exposing (Token)
 
 
 type Route
@@ -28,13 +25,13 @@ urlFor r =
             "/"
 
         Terms token ->
-            "/#terms/" ++ token
+            "/#terms/" ++ Token.toString token
 
         Target token ->
-            "/#target/" ++ token
+            "/#target/" ++ Token.toString token
 
         Resolver token ->
-            "/#resolver/" ++ token
+            "/#resolver/" ++ Token.toString token
 
         NotFoundRoute ->
             "/#404"
@@ -54,7 +51,7 @@ matchers : Parser (Route -> a) a
 matchers =
     oneOf
         [ map FileUpload top
-        , map Terms (s "terms" </> string)
-        , map Target (s "target" </> string)
-        , map Resolver (s "resolver" </> string)
+        , map (Terms << Token.fromString) (s "terms" </> string)
+        , map (Target << Token.fromString) (s "target" </> string)
+        , map (Resolver << Token.fromString) (s "resolver" </> string)
         ]

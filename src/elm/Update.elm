@@ -16,6 +16,7 @@ import Target.Helper as DSH
 import Resolver.Messages as RM
 import Resolver.Update as RU
 import Resolver.Api as RA
+import Data.Token as Token
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -107,7 +108,7 @@ updateResolver : RM.Msg -> Model -> ( Model, Cmd Msg )
 updateResolver msg model =
     let
         token =
-            Maybe.withDefault "" <| currentToken model
+            Maybe.withDefault (Token.fromString "") <| currentToken model
 
         ( resolverModel, resolverCmd ) =
             RU.update msg model.resolver token

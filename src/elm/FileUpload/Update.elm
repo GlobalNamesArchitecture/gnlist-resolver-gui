@@ -1,9 +1,10 @@
 module FileUpload.Update exposing (update, subscriptions)
 
 import Routing exposing (Route(Terms), navigateTo)
-import FileUpload.Models exposing (Upload, UploadProgress(..), Loaded(..), Total(..), UploadFailure(..), Token(..), jsonFileToFile)
+import FileUpload.Models exposing (Upload, UploadProgress(..), Loaded(..), Total(..), UploadFailure(..), jsonFileToFile)
 import FileUpload.Messages exposing (Msg(..))
 import FileUpload.Ports exposing (..)
+import Data.Token as Token
 
 
 subscriptions : Sub Msg
@@ -15,7 +16,7 @@ subscriptions =
         , fileUploadStarted FileUploadStarted
         , fileUploadComplete FileUploadComplete
         , fileUploadFailed FileUploadFailed
-        , fileUploadSuccess FileUploadSuccess
+        , fileUploadSuccess (FileUploadSuccess << Token.fromString)
         ]
 
 
@@ -49,7 +50,7 @@ update msg upload =
             )
 
         FileUploadSuccess token ->
-            ( { upload | progress = Succeeded (Token token) }
+            ( { upload | progress = Succeeded token }
             , navigateTo <| Terms token
             )
 

@@ -11,9 +11,10 @@ import View.Layout exposing (contentWrapper, styledButton)
 import I18n exposing (Translation(..))
 import Terms.Messages exposing (Msg(..))
 import Target.Models exposing (DataSources)
+import Data.Token exposing (Token)
 
 
-view : DataSources -> Terms -> String -> Html Msg
+view : DataSources -> Terms -> Token -> Html Msg
 view ds terms token =
     contentWrapper BreadcrumbMapHeaders
         MapDescription
@@ -25,7 +26,7 @@ view ds terms token =
         ]
 
 
-continueButton : DataSources -> String -> Html Msg
+continueButton : DataSources -> Token -> Html Msg
 continueButton ds token =
     styledButton [] (nextMsg ds token) Continue
 
@@ -45,7 +46,7 @@ viewRowEntry re =
     Table.td [] [ text <| Maybe.withDefault "" re ]
 
 
-materialTable : String -> Terms -> Html Msg
+materialTable : Token -> Terms -> Html Msg
 materialTable token terms =
     div [ class "terms__table" ]
         [ Table.table []
@@ -55,7 +56,7 @@ materialTable token terms =
         ]
 
 
-nextMsg : DataSources -> String -> Msg
+nextMsg : DataSources -> Token -> Msg
 nextMsg ds token =
     if List.length ds > 1 then
         ToDataSources token
@@ -63,12 +64,12 @@ nextMsg ds token =
         ToResolver token
 
 
-viewSelectors : String -> Terms -> Html Msg
+viewSelectors : Token -> Terms -> Html Msg
 viewSelectors token terms =
     Table.tr [] (List.map (viewSelector token terms) terms.headers)
 
 
-viewSelector : String -> Terms -> Header -> Html Msg
+viewSelector : Token -> Terms -> Header -> Html Msg
 viewSelector token terms header =
     Table.th []
         [ text <| I18n.t TermMatchWithHeader
