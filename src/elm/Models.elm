@@ -13,7 +13,6 @@ type alias Model =
     { route : Routing.Route
     , resolverUrl : String
     , localDomain : String
-    , token : Maybe String
     , upload : Upload
     , terms : Terms
     , target : Target
@@ -37,7 +36,6 @@ initModel flags route =
     Model route
         flags.resolverUrl
         flags.localDomain
-        Nothing
         initUpload
         initTerms
         (initTarget flags.dataSourcesIds)
