@@ -42,8 +42,7 @@ module Gnlr
                data_source_id: list_matcher.data_source_id,
                resolver_url: Gnlr.conf.internal_resolver_url +
                              "/name_resolvers.json",
-               with_classification: true,
-               threads: 2,
+               with_classification: true, threads: 2,
                skip_original: false, alt_headers: alt_headers }
       [list_matcher, opts]
     end
