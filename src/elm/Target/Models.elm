@@ -1,33 +1,30 @@
-module Target.Models exposing (..)
+module Target.Models
+    exposing
+        ( Target
+        , initial
+        , currentDataSource
+        )
 
-import Maybe exposing (withDefault)
+import Data.DataSource as DataSource exposing (DataSource)
 
 
 type alias Target =
-    { all : DataSources
-    , current : Int
+    { current : Maybe DataSource.Id
     , filter : String
     }
 
 
-type alias DataSources =
-    List DataSource
+initial : Target
+initial =
+    { current = Nothing, filter = "" }
 
 
-type alias DataSource =
-    { id : Int
-    , title : Maybe String
-    , desc : Maybe String
-    }
-
-
-initTarget : List Int -> Target
-initTarget dss =
+currentDataSource : List DataSource -> Target -> Maybe DataSource
+currentDataSource dataSources { current } =
     let
-        current =
-            withDefault 1 <| List.head dss
-
-        infos =
-            List.map (\id -> DataSource id Nothing Nothing) dss
+        currentDataSource current_ =
+            List.head <|
+                List.filter (\ds -> ds.id == current_) dataSources
     in
-        Target infos current ""
+        current
+            |> Maybe.andThen currentDataSource

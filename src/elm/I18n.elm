@@ -3,7 +3,6 @@ module I18n exposing (Translation(..), t)
 import Filesize
 import TimeDuration.Model exposing (..)
 import FileUpload.Models exposing (Bytes(..), FileName(..))
-import Target.Models exposing (DataSource)
 import Resolver.Helper
     exposing
         ( ResolverProgress(..)
@@ -17,6 +16,7 @@ import Resolver.Models
         , MatchType(..)
         , NamesPerSecond(..)
         )
+import Data.DataSource exposing (DataSource)
 
 
 type Translation a
@@ -127,7 +127,7 @@ t translation =
 
         ListMatchingHeader { title } ->
             "Matching names from your file against \""
-                ++ Maybe.withDefault "Unknown" title
+                ++ title
                 ++ "\" data"
 
         IngestionStatus ->

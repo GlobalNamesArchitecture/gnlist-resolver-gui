@@ -7,7 +7,7 @@ import Material.Card as Card
 import Material.Elevation as Elevation
 import Material.Options as Options
 import Terms.Models exposing (Terms)
-import Target.Models exposing (DataSource)
+import Data.DataSource exposing (DataSource)
 import View.Layout exposing (contentWrapper, styledButton)
 import Resolver.Models
     exposing

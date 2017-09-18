@@ -2,6 +2,8 @@ module Update exposing (init, update)
 
 import Material
 import Messages exposing (Msg(..))
+import Http
+import RemoteData
 import Models exposing (Model, Flags, currentToken, initModel)
 import Navigation exposing (Location)
 import Routing exposing (Route(..))
@@ -13,11 +15,11 @@ import Terms.Update as TU
 import Terms.Helper as TH
 import Target.Messages as DSM
 import Target.Update as DSU
-import Target.Helper as DSH
 import Resolver.Messages as RM
 import Resolver.Update as RU
 import Resolver.Api as RA
 import Data.Token as Token exposing (Token)
+import Data.DataSource as DataSource
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -44,6 +46,11 @@ update msg model =
         EmptyErrors ->
             emptyErrors model
 
+        LoadDataSources v ->
+            ( { model | dataSources = v }
+            , Cmd.none
+            )
+
 
 updateRoute : Location -> Model -> ( Model, Cmd Msg )
 updateRoute location model =
@@ -61,13 +68,19 @@ routingCommand : Model -> Route -> Cmd Msg
 routingCommand model route =
     case route of
         Resolver token ->
-            Cmd.map ResolverMsg <| RA.queryResolutionProgress token
+            Cmd.batch
+                [ Cmd.map ResolverMsg <| RA.queryResolutionProgress token
+                , Cmd.map TargetMsg <| DSU.retrieveDataSource token
+                ]
 
         Terms token ->
             if List.isEmpty model.terms.headers then
                 Cmd.map TermsMsg <| TH.getTerms token
             else
                 Cmd.none
+
+        Target token ->
+            Cmd.map TargetMsg <| DSU.retrieveDataSource token
 
         _ ->
             Cmd.none
@@ -141,6 +154,17 @@ init flags location =
         , Cmd.batch
             [ FUP.isUploadSupported ()
             , routingCommand model currentRoute
-            , Cmd.map TargetMsg <| DSH.getDataSources model.resolverUrl
+            , loadDataSources model
             ]
         )
+
+
+loadDataSources : Model -> Cmd Msg
+loadDataSources { resolverUrl } =
+    let
+        datasourceUrl =
+            resolverUrl ++ "/data_sources.json"
+    in
+        Http.get datasourceUrl DataSource.listDecoder
+            |> RemoteData.sendRequest
+            |> Cmd.map LoadDataSources

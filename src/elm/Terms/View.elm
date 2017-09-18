@@ -10,25 +10,24 @@ import Terms.Models exposing (Terms, Term, Header, Row, allTermValues)
 import View.Layout exposing (contentWrapper, styledButton)
 import I18n exposing (Translation(..))
 import Terms.Messages exposing (Msg(..))
-import Target.Models exposing (DataSources)
 import Data.Token exposing (Token)
 
 
-view : DataSources -> Terms -> Token -> Html Msg
-view ds terms token =
+view : Terms -> Token -> Html Msg
+view terms token =
     contentWrapper BreadcrumbMapHeaders
         MapDescription
         [ div []
-            [ continueButton ds token
+            [ continueButton token
             , materialTable token terms
-            , continueButton ds token
+            , continueButton token
             ]
         ]
 
 
-continueButton : DataSources -> Token -> Html Msg
-continueButton ds token =
-    styledButton [] (nextMsg ds token) Continue
+continueButton : Token -> Html Msg
+continueButton token =
+    styledButton [] (ToDataSources token) Continue
 
 
 viewRows : List Row -> List (Html a)
@@ -54,14 +53,6 @@ materialTable token terms =
             , Table.tbody [] <| viewRows terms.rows
             ]
         ]
-
-
-nextMsg : DataSources -> Token -> Msg
-nextMsg ds token =
-    if List.length ds > 1 then
-        ToDataSources token
-    else
-        ToResolver token
 
 
 viewSelectors : Token -> Terms -> Html Msg

@@ -1,47 +1,63 @@
-module Target.Update exposing (update)
+module Target.Update exposing (update, retrieveDataSource)
 
 import Routing exposing (Route(Resolver), navigateTo)
 import Http
+import Json.Decode as Decode exposing (Decoder)
 import Helper as H
 import Target.Models exposing (Target)
 import Target.Messages exposing (Msg(..))
-import Target.Helper as HDS
 import Target.Encoder as TE
 import Data.Token as Token exposing (Token)
+import Data.DataSource as DataSource
 
 
 update : Msg -> Target -> ( Target, Cmd Msg )
-update msg ds =
+update msg target =
     case msg of
-        AllDataSources (Ok dss) ->
-            ( { ds | all = HDS.prepareDataSources ds dss }
-            , Cmd.none
-            )
-
-        AllDataSources (Err _) ->
-            ( ds, Cmd.none )
-
         ToResolver token ->
-            ( ds, navigateTo <| Resolver token )
+            ( target, navigateTo <| Resolver token )
+
+        UpdateCurrentTarget (Ok current) ->
+            ( updateTarget current target, Cmd.none )
+
+        UpdateCurrentTarget (Err _) ->
+            ( target, Cmd.none )
 
         CurrentTarget token current ->
-            ( { ds | current = current }, saveTarget token current )
+            ( updateTarget current target, saveTarget token current )
 
-        SaveTarget (Ok _) ->
-            ( ds, Cmd.none )
-
-        SaveTarget (Err _) ->
-            ( ds, Cmd.none )
+        SaveTarget _ ->
+            ( target, Cmd.none )
 
         FilterTarget f ->
-            ( { ds | filter = f }, Cmd.none )
+            ( { target | filter = f }, Cmd.none )
 
 
-saveTarget : Token -> Int -> Cmd Msg
-saveTarget token targetId =
+updateTarget : DataSource.Id -> Target -> Target
+updateTarget dataSourceId target =
+    { target | current = Just dataSourceId }
+
+
+saveTarget : Token -> DataSource.Id -> Cmd Msg
+saveTarget token dataSourceId =
     let
         url =
             "/list_matchers"
     in
         Http.send SaveTarget
-            (H.put url <| TE.body token targetId)
+            (H.put url <| TE.body token dataSourceId)
+
+
+retrieveDataSource : Token -> Cmd Msg
+retrieveDataSource token =
+    let
+        url =
+            "/list_matchers/" ++ Token.toString token
+    in
+        Http.send UpdateCurrentTarget
+            (Http.get url currentTargetDecoder)
+
+
+currentTargetDecoder : Decoder DataSource.Id
+currentTargetDecoder =
+    Decode.map DataSource.Id <| Decode.field "data_source_id" Decode.int

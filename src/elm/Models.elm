@@ -1,17 +1,21 @@
-module Models exposing (Model, Flags, initModel, currentToken)
+module Models exposing (Model, Flags, initModel, currentToken, visibleDataSources)
 
 import Material
+import RemoteData exposing (WebData, RemoteData(..))
 import Routing exposing (Route(..))
 import FileUpload.Models exposing (Upload, initUpload)
 import Terms.Models exposing (Terms, initTerms)
-import Target.Models exposing (Target, initTarget)
+import Target.Models as Target exposing (Target)
 import Resolver.Models exposing (Resolver, initResolver)
 import Errors exposing (Errors)
 import Data.Token exposing (Token)
+import Data.DataSource as DataSource exposing (DataSource)
 
 
 type alias Model =
     { route : Routing.Route
+    , dataSources : WebData (List DataSource)
+    , allowedDataSourceIds : List DataSource.Id
     , resolverUrl : String
     , localDomain : String
     , upload : Upload
@@ -34,16 +38,26 @@ type alias Flags =
 
 initModel : Flags -> Routing.Route -> Model
 initModel flags route =
-    Model route
-        flags.resolverUrl
-        flags.localDomain
-        initUpload
-        initTerms
-        (initTarget flags.dataSourcesIds)
-        initResolver
-        Nothing
-        flags.version
-        Material.model
+    let
+        dataSourceIds =
+            List.map DataSource.Id flags.dataSourcesIds
+
+        initialTarget =
+            Target.initial
+    in
+        { route = route
+        , dataSources = NotAsked
+        , allowedDataSourceIds = dataSourceIds
+        , resolverUrl = flags.resolverUrl
+        , localDomain = flags.localDomain
+        , upload = initUpload
+        , terms = initTerms
+        , target = { initialTarget | current = List.head dataSourceIds }
+        , resolver = initResolver
+        , errors = Nothing
+        , softwareVersion = flags.version
+        , mdl = Material.model
+        }
 
 
 currentToken : Model -> Maybe Token
@@ -63,3 +77,12 @@ currentToken { route } =
 
         NotFoundRoute ->
             Nothing
+
+
+visibleDataSources : Model -> WebData (List DataSource)
+visibleDataSources { dataSources, allowedDataSourceIds } =
+    let
+        filterAllowedSource =
+            List.filter (\item -> List.member item.id allowedDataSourceIds)
+    in
+        RemoteData.map filterAllowedSource dataSources

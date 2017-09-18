@@ -16,13 +16,14 @@ import Json.Decode as J
 import Maybe exposing (withDefault)
 import I18n exposing (Translation(..))
 import View.Layout exposing (contentWrapper, styledButton)
-import Target.Models exposing (Target, DataSource)
+import Target.Models exposing (Target)
 import Target.Messages exposing (Msg(..))
 import Data.Token exposing (Token)
+import Data.DataSource as DataSource exposing (DataSource)
 
 
-view : Target -> Token -> Html Msg
-view target token =
+view : List DataSource -> Target -> Token -> Html Msg
+view dataSources target token =
     contentWrapper BreadcrumbPickReferenceData
         PickReferenceDataDescription
         [ div []
@@ -39,7 +40,7 @@ view target token =
                     ]
                     []
                 ]
-            , selectTarget target token
+            , selectTarget dataSources target token
             ]
         ]
 
@@ -59,29 +60,24 @@ onInput msg =
     on "input" <| J.andThen (\t -> J.succeed <| msg (normalize t)) targetValue
 
 
-selectTarget : Target -> Token -> Html Msg
-selectTarget target token =
+selectTarget : List DataSource -> Target -> Token -> Html Msg
+selectTarget dataSources target token =
     let
         match t =
-            case t.title of
-                Nothing ->
-                    False
-
-                Just title ->
-                    String.contains target.filter <| normalize title
+            String.contains target.filter <| normalize t.title
 
         sources =
             if target.filter == "" then
-                target.all
+                dataSources
             else
-                List.filter match target.all
+                List.filter match dataSources
     in
         sources
             |> List.map (dataSourceRender token target.current)
             |> div []
 
 
-dataSourceRender : Token -> Int -> DataSource -> Html Msg
+dataSourceRender : Token -> Maybe DataSource.Id -> DataSource -> Html Msg
 dataSourceRender token current dsi =
     div []
         [ input
@@ -92,10 +88,15 @@ dataSourceRender token current dsi =
             , onClick (CurrentTarget token dsi.id)
             ]
             []
-        , text <| withDefault "" dsi.title
+        , text dsi.title
         ]
 
 
-checkedTarget : DataSource -> Int -> Bool
-checkedTarget dsi current =
-    dsi.id == current
+checkedTarget : DataSource -> Maybe DataSource.Id -> Bool
+checkedTarget { id } current =
+    case current of
+        Nothing ->
+            False
+
+        Just current_ ->
+            id == current_

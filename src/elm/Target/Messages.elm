@@ -1,13 +1,13 @@
 module Target.Messages exposing (Msg(..))
 
 import Http
-import Target.Models exposing (DataSources)
 import Data.Token exposing (Token)
+import Data.DataSource as DataSource
 
 
 type Msg
-    = CurrentTarget Token Int
+    = CurrentTarget Token DataSource.Id
+    | UpdateCurrentTarget (Result Http.Error DataSource.Id)
     | SaveTarget (Result Http.Error ())
-    | AllDataSources (Result Http.Error DataSources)
     | ToResolver Token
     | FilterTarget String
