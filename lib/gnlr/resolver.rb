@@ -25,13 +25,22 @@ module Gnlr
       list_matcher, opts = params(token)
       @output = opts[:output]
       GnCrossmap.run(opts) do |stats|
-        %i[ingestion_start resolution_start
-           resolution_stop ingestion_span resolution_span].each do |t|
-          stats[t] = stats[t].to_f unless stats[t].nil?
-        end
+        stats = update_stats(stats)
         list_matcher.update(stats: stats.merge(excel_rows: 0))
         "STOP" if ListMatcher.find_by_token(token).stop_trigger
       end
+    end
+
+    def update_stats(stats)
+      %i[ingestion_start ingestion_span].each do |t|
+        stats[t] = stats[t].to_f unless stats[t].nil?
+      end
+      %i[start_time stop_time time_span].each do |t|
+        unless stats[:resolution][t].nil?
+          stats[:resolution][t] = stats[:resolution][t].to_f
+        end
+      end
+      stats
     end
 
     def params(token)

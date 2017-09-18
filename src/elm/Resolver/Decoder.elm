@@ -55,12 +55,11 @@ statusToStatsDecoder status =
 
 progressMetadataDecoder : Decoder ProgressMetadata
 progressMetadataDecoder =
-    map5 ProgressMetadata
+    map4 ProgressMetadata
         matches
         failureCountDecoder
         totalRecordCountDecoder
         excelRowCountDecoder
-        lastBatchesTimeDecoder
 
 
 failureCountDecoder : Decoder FailureCount
@@ -88,10 +87,12 @@ ingestionDecoder =
 
 resolutionDecoder : Decoder Resolution
 resolutionDecoder =
-    map3 Resolution
-        (at [ "resolved_records" ] processedRecordCountDecoder)
-        (at [ "resolution_start" ] timeDecoder)
-        (at [ "resolution_span" ] secondsDecoder)
+    map5 Resolution
+        (at [ "resolution", "completed_records" ] processedRecordCountDecoder)
+        (at [ "resolution", "start_time" ] timeDecoder)
+        (at [ "resolution", "time_span" ] secondsDecoder)
+        (at [ "resolution", "speed" ] speedDecoder)
+        (at [ "resolution", "eta" ] secondsDecoder)
 
 
 processedRecordCountDecoder : Decoder ProcessedRecordCount
@@ -141,7 +142,7 @@ matches =
 
 resolutionStopDecoder : Decoder Float
 resolutionStopDecoder =
-    at [ "resolution_stop" ] float
+    at [ "resolution", "stop_time" ] timeDecoder
 
 
 timeDecoder : Decoder Time
@@ -152,3 +153,8 @@ timeDecoder =
 secondsDecoder : Decoder Seconds
 secondsDecoder =
     map Seconds float
+
+
+speedDecoder : Decoder NamesPerSecond
+speedDecoder =
+    map NamesPerSecond float

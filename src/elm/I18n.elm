@@ -4,8 +4,19 @@ import Filesize
 import TimeDuration.Model exposing (..)
 import FileUpload.Models exposing (Bytes(..), FileName(..))
 import Target.Models exposing (DataSource)
-import Resolver.Helper exposing (ResolverProgress(..), ExcelProgress(..), Input)
-import Resolver.Models exposing (ProcessedRecordCount(..), MatchType(..))
+import Resolver.Helper
+    exposing
+        ( ResolverProgress(..)
+        , ExcelProgress(..)
+        , Input
+        , ResolutionInput
+        )
+import Resolver.Models
+    exposing
+        ( ProcessedRecordCount(..)
+        , MatchType(..)
+        , NamesPerSecond(..)
+        )
 
 
 type Translation a
@@ -131,6 +142,12 @@ t translation =
         ResolverStatus (InProgress input) ->
             "In Progress " ++ etaString input
 
+        ResolverStatus (ResolutionComplete input) ->
+            "Done " ++ resolutionSummaryString input
+
+        ResolverStatus (ResolutionInProgress input) ->
+            "In Progress " ++ resolutionEtaString input
+
         ResolverStatus (Complete input) ->
             "Done " ++ summaryString input
 
@@ -240,9 +257,28 @@ etaString { estimate } =
     let
         { namesPerSec, eta } =
             estimate
+
+        (NamesPerSecond speed) =
+            namesPerSec
     in
         "("
-            ++ toString (floor namesPerSec)
+            ++ toString (floor speed)
+            ++ " names/sec, Est. wait: "
+            ++ waitTimeToString eta
+            ++ ")"
+
+
+resolutionEtaString : ResolutionInput -> String
+resolutionEtaString { estimate } =
+    let
+        { namesPerSec, eta } =
+            estimate
+
+        (NamesPerSecond speed) =
+            namesPerSec
+    in
+        "("
+            ++ toString (floor speed)
             ++ " names/sec, Est. wait: "
             ++ waitTimeToString eta
             ++ ")"
@@ -270,6 +306,23 @@ waitTimeToString (TimeDuration h m s) =
 
 summaryString : Input -> String
 summaryString { timeSpan, processed } =
+    let
+        hms =
+            secondsToTimeDuration timeSpan
+
+        (ProcessedRecordCount processed_) =
+            processed
+    in
+        "("
+            ++ "Processed "
+            ++ toString processed_
+            ++ " names in "
+            ++ waitTimeToString hms
+            ++ ")"
+
+
+resolutionSummaryString : ResolutionInput -> String
+resolutionSummaryString { timeSpan, processed } =
     let
         hms =
             secondsToTimeDuration timeSpan

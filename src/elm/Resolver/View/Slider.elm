@@ -42,7 +42,20 @@ floatFromProgress progress =
             in
                 ( 100 * toFloat processed_ / toFloat total_, 100 )
 
+        ResolutionInProgress { total, processed } ->
+            let
+                (ProcessedRecordCount processed_) =
+                    processed
+
+                (TotalRecordCount total_) =
+                    total
+            in
+                ( 100 * toFloat processed_ / toFloat total_, 100 )
+
         Complete _ ->
+            ( 100, 100 )
+
+        ResolutionComplete _ ->
             ( 100, 100 )
 
 
@@ -67,7 +80,7 @@ legendValueAboveMinimumThreshold (PieChartLegend _ value) =
 
 
 chartData : ProgressMetadata -> Html a
-chartData (ProgressMetadata matches (FailureCount fails) _ _ _) =
+chartData (ProgressMetadata matches (FailureCount fails) _ _) =
     let
         results =
             List.filter legendValueAboveMinimumThreshold

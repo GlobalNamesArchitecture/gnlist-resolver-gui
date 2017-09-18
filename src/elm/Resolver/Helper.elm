@@ -1,6 +1,7 @@
 module Resolver.Helper
     exposing
         ( Input
+        , ResolutionInput
         , ResolverProgress(..)
         , ExcelProgress(..)
         , resolutionResolverProgress
@@ -9,7 +10,7 @@ module Resolver.Helper
         , ingestionInput
         )
 
-import Resolver.Models exposing (Resolver, Resolution, Ingestion, Stats(..), ProgressMetadata(..), TotalRecordCount(..), ExcelRowsCount(..), ProcessedRecordCount(..))
+import Resolver.Models exposing (Resolver, Resolution, Ingestion, Stats(..), ProgressMetadata(..), TotalRecordCount(..), ExcelRowsCount(..), ProcessedRecordCount(..), NamesPerSecond(..))
 import TimeDuration.Model exposing (..)
 
 
@@ -22,6 +23,15 @@ type alias Input =
     }
 
 
+type alias ResolutionInput =
+    { total : TotalRecordCount
+    , processed : ProcessedRecordCount
+    , timeSpan : Seconds
+    , speed : NamesPerSecond
+    , estimate : Estimate
+    }
+
+
 type alias Velocity =
     { recordsNum : ProcessedRecordCount
     , timeSpan : Seconds
@@ -29,7 +39,7 @@ type alias Velocity =
 
 
 type alias Estimate =
-    { namesPerSec : Float
+    { namesPerSec : NamesPerSecond
     , eta : TimeDuration
     }
 
@@ -40,6 +50,9 @@ estimate total processed velocity =
         namesPerSec =
             normalizeVelocity velocity
 
+        (NamesPerSecond speed) =
+            namesPerSec
+
         (TotalRecordCount total_) =
             total
 
@@ -49,13 +62,13 @@ estimate total processed velocity =
         eta =
             timeToSeconds <|
                 toFloat (total_ - processed_)
-                    / namesPerSec
+                    / speed
     in
         Estimate namesPerSec (secondsToTimeDuration eta)
 
 
 ingestionInput : ProgressMetadata -> Ingestion -> Maybe Resolution -> Input
-ingestionInput (ProgressMetadata _ _ totalRecords _ _) ingestion mresolution =
+ingestionInput (ProgressMetadata _ _ totalRecords _) ingestion mresolution =
     let
         processed =
             ingestion.ingestedRecords
@@ -66,7 +79,9 @@ ingestionInput (ProgressMetadata _ _ totalRecords _ _) ingestion mresolution =
                     ingestion.ingestionSpan
 
                 Just resolution ->
-                    timeToSeconds <| resolution.resolutionStart - ingestion.ingestionStart
+                    timeToSeconds <|
+                        resolution.start
+                            - ingestion.ingestionStart
 
         vel =
             [ Velocity processed ingestion.ingestionSpan ]
@@ -74,8 +89,12 @@ ingestionInput (ProgressMetadata _ _ totalRecords _ _) ingestion mresolution =
         Input totalRecords processed timeSpent vel (estimate totalRecords processed vel)
 
 
-resolutionInput : ProgressMetadata -> Resolution -> Maybe Float -> Input
-resolutionInput (ProgressMetadata _ _ totalRecords _ lastBatchesTime) resolution resolutionStop =
+resolutionInput :
+    ProgressMetadata
+    -> Resolution
+    -> Maybe Float
+    -> ResolutionInput
+resolutionInput (ProgressMetadata _ _ totalRecords _) resolution resolutionStop =
     let
         processed =
             resolution.resolvedRecords
@@ -83,18 +102,20 @@ resolutionInput (ProgressMetadata _ _ totalRecords _ lastBatchesTime) resolution
         timeSpan =
             case resolutionStop of
                 Nothing ->
-                    resolution.resolutionSpan
+                    resolution.timeSpan
 
                 Just stop ->
-                    timeToSeconds <| stop - resolution.resolutionStart
+                    timeToSeconds <| stop - resolution.start
 
-        expectedProcessCountPerSecond =
-            ProcessedRecordCount 200
-
-        vel =
-            List.map (Velocity expectedProcessCountPerSecond) lastBatchesTime
+        estimate =
+            Estimate resolution.speed <|
+                secondsToTimeDuration resolution.estimate
     in
-        Input totalRecords processed timeSpan vel (estimate totalRecords processed vel)
+        ResolutionInput totalRecords
+            processed
+            timeSpan
+            resolution.speed
+            estimate
 
 
 occurrencesPerSecond : ProcessedRecordCount -> Seconds -> Float
@@ -107,9 +128,9 @@ velocityOccurrencesPerSecond { recordsNum, timeSpan } =
     occurrencesPerSecond recordsNum timeSpan
 
 
-normalizeVelocity : List Velocity -> Float
+normalizeVelocity : List Velocity -> NamesPerSecond
 normalizeVelocity vs =
-    average <| List.map velocityOccurrencesPerSecond vs
+    NamesPerSecond <| average <| List.map velocityOccurrencesPerSecond vs
 
 
 average : List Float -> Float
@@ -120,6 +141,8 @@ average xs =
 type ResolverProgress a
     = Pending
     | InProgress Input
+    | ResolutionInProgress ResolutionInput
+    | ResolutionComplete ResolutionInput
     | Complete Input
 
 
@@ -175,10 +198,16 @@ resolutionResolverProgress { stats } =
             Pending
 
         Resolving metadata _ resolution ->
-            InProgress <| resolutionInput metadata resolution Nothing
+            ResolutionInProgress <|
+                resolutionInput metadata
+                    resolution
+                    Nothing
 
-        BuildingExcel metadata ingestion _ _ ->
-            Complete <| ingestionInput metadata ingestion Nothing
+        BuildingExcel metadata _ resolution _ ->
+            ResolutionComplete <| resolutionInput metadata resolution Nothing
 
         Done metadata _ resolution stop ->
-            Complete <| resolutionInput metadata resolution (Just stop)
+            ResolutionComplete <|
+                resolutionInput metadata
+                    resolution
+                    (Just stop)

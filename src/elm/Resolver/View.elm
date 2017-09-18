@@ -142,7 +142,7 @@ xlsxView terms stats =
 
 
 excelProgress : ProgressMetadata -> Html Msg
-excelProgress (ProgressMetadata _ _ total rows _) =
+excelProgress (ProgressMetadata _ _ total rows) =
     span
         [ style
             [ ( "color", "white" )

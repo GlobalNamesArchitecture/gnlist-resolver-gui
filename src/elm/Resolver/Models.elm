@@ -28,17 +28,21 @@ type ExcelRowsCount
     = ExcelRowsCount Int
 
 
+type NamesPerSecond
+    = NamesPerSecond Float
+
+
 type ProgressMetadata
-    = ProgressMetadata Matches FailureCount TotalRecordCount ExcelRowsCount (List Seconds)
+    = ProgressMetadata Matches FailureCount TotalRecordCount ExcelRowsCount
 
 
 totalRecordCount : ProgressMetadata -> TotalRecordCount
-totalRecordCount (ProgressMetadata _ _ i _ _) =
+totalRecordCount (ProgressMetadata _ _ i _) =
     i
 
 
 excelRowsCount : ProgressMetadata -> ExcelRowsCount
-excelRowsCount (ProgressMetadata _ _ _ i _) =
+excelRowsCount (ProgressMetadata _ _ _ i) =
     i
 
 
@@ -64,7 +68,7 @@ metadataFromStats stats =
             Just m
 
         BuildingExcel m _ _ _ ->
-            Just <| m
+            Just m
 
         Done m _ _ _ ->
             Just m
@@ -90,8 +94,10 @@ type alias Ingestion =
 
 type alias Resolution =
     { resolvedRecords : ProcessedRecordCount
-    , resolutionStart : Time
-    , resolutionSpan : Seconds
+    , start : Time
+    , timeSpan : Seconds
+    , speed : NamesPerSecond
+    , estimate : Seconds
     }
 
 
