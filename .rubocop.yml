@@ -6,7 +6,7 @@ AllCops:
     - node_modules/**/*
 Style/StringLiterals:
   EnforcedStyle: double_quotes
-Style/DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
 Security/YAMLLoad:
   Enabled: false

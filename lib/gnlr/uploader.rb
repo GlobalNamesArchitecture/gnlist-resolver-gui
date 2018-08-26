@@ -22,8 +22,8 @@ module Gnlr
     private
 
     def copy_file(token, enc)
-      open(ListMatcher.input(token), "w") do |input|
-        f = open(@params.tempfile.path, encoding: enc)
+      File.open(ListMatcher.input(token), "w") do |input|
+        f = File.open(@params.tempfile.path, encoding: enc)
         input.write(f.read)
         f.close
       end

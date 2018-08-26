@@ -6,8 +6,8 @@ module Gnlr
     class << self
       def sample(file, col_sep)
         quot = col_sep == "\t" ? "\x00" : '"'
-        csv = CSV.new(open(file, "r:utf-8"), col_sep: col_sep,
-                                             quote_char: quot)
+        csv = CSV.new(File.open(file, "r:utf-8"), col_sep: col_sep,
+                                                  quote_char: quot)
         headers, rows = traverse_csv(csv)
         { headers: headers, rows: rows.sort_by { |r| r.compact.size }.
           reverse[0..9] }

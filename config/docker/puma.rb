@@ -3,7 +3,7 @@
 threads 1, 6
 workers ENV["RACKAPP_PUMA_WORKERS"] || 4
 
-app_dir = File.expand_path("../../..", __FILE__)
+app_dir = File.expand_path("../..", __dir__)
 
 # Default to production
 rack_env = ENV["RACK_ENV"] || "production"

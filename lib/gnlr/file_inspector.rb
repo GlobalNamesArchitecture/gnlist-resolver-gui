@@ -52,13 +52,13 @@ module Gnlr
       end
 
       def separator(file, enc)
-        f = open(file.path, encoding: enc)
+        f = File.open(file.path, encoding: enc)
         line = f.gets.strip
         f.close
         res = [[";", 1], [",", 0], ["\t", 2]].map do |s, weight|
           [line.count(s), weight, s]
         end
-        res = res.sort.last
+        res = res.max
         res.first.zero? ? "\t" : res.last
       end
     end

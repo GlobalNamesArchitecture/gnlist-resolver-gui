@@ -38,11 +38,11 @@ module Gnlr
       update_stats(@list_matcher.stats["total_records"])
     end
 
-    def add_row(headers, sheet, row, i, percent)
+    def add_row(headers, sheet, row, index, percent)
       if headers[:inputCanonicalForm].nil?
         headers.keys.each { |k| headers[k] = row.index(k.to_s) }
       end
-      update_stats(i) if (i % percent).zero?
+      update_stats(index) if (index % percent).zero?
       row = handle_edit_distance(headers, row)
       sheet.add_row(row)
     end
@@ -52,8 +52,8 @@ module Gnlr
       show_edit_distance(headers, row)
     end
 
-    def update_stats(i)
-      @list_matcher.stats["excel_rows"] = i
+    def update_stats(index)
+      @list_matcher.stats["excel_rows"] = index
       @list_matcher.save!
     end
 

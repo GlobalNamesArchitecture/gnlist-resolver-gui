@@ -18,7 +18,9 @@ end
 
 RuboCop::RakeTask.new
 
+# rubocop:disable Style/MixinUsage
 include ActiveRecord::Tasks
+# rubocop:enable Style/MixinUsage
 raw_conf = File.read(File.join(__dir__, "config", "config.yml"))
 conf = YAML.load(ERB.new(raw_conf).result)
 ActiveRecord::Base.configurations = conf["database"]

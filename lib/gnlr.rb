@@ -53,7 +53,8 @@ module Gnlr
     private
 
     def check_env
-      e_required = open(File.join(ROOT_PATH, "config", "env.sh")).map do |l|
+      f = File.open(File.join(ROOT_PATH, "config", "env.sh"))
+      e_required = f.map do |l|
         key, val = l.strip.split("=")
         val && key
       end.compact
@@ -97,7 +98,7 @@ module Gnlr
     def read_env
       env_file = DEFAULT_ENV_FILE
       env_file = ENV["ENV_FILE"] if ENV["ENV_FILE"]
-      open(env_file).each do |l|
+      File.open(env_file).each do |l|
         key, val = l.strip.split("=")
         ENV[key.strip] = val.strip if key && val
       end

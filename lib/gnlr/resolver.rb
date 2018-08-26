@@ -46,7 +46,7 @@ module Gnlr
     def params(token)
       list_matcher = ListMatcher.find_by_token(token)
       output = File.join(Gnlr::App.public_folder, list_matcher.output)
-      alt_headers = list_matcher.alt_headers ? list_matcher.alt_headers : []
+      alt_headers = list_matcher.alt_headers || []
       opts = { input: list_matcher.input, output: output,
                data_source_id: list_matcher.data_source_id,
                resolver_url: Gnlr.conf.internal_resolver_url +
