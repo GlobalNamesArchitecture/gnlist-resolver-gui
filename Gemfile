@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "activerecord", "~> 5.1"
-gem "axlsx", "2.1.0pre"
+gem "axlsx", "3.0.0pre"
 gem "childprocess", "~> 0.7"
 gem "compass", "~> 1.0"
 gem "damerau-levenshtein", "~> 1.3"
@@ -18,7 +18,7 @@ gem "rake", "~> 12.0"
 gem "rest-client", "~> 2.0"
 gem "ruby-filemagic", "~> 0.7.1"
 gem "sass", "~> 3.4"
-gem "sinatra", "~> 2.0", require: "sinatra/base"
+gem "sinatra", "~> 2.0.2", require: "sinatra/base"
 gem "sinatra-activerecord", "~> 2.0"
 gem "sinatra-flash", "~> 0.3"
 gem "sinatra-redirect-with-flash", "~> 0.2",
@@ -28,7 +28,7 @@ gem "zen-grids", "~> 1.4"
 
 group :development do
   gem "byebug", "~> 9.0"
-  gem "sinatra-reloader", "~> 1.0"
+  gem "sinatra-reloader"
 end
 
 group :test do
